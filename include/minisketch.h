@@ -88,20 +88,21 @@ void minisketch_add_uint64(minisketch* sketch, uint64_t element);
 
 /** Merge the elements of another sketch into this sketch.
  *
- * The resulting sketch will contain every element that existed in one but not
+ * After merging, `sketch` will contain every element that existed in one but not
  * both of the input sketches. It can be seen as an exclusive or operation on
- * the set elements.
+ * the set elements.  If the capacity of `other_sketch` is lower than `sketch`'s,
+ * merging reduces the capacity of `sketch` to that of `other_sketch`.
  *
- * If the capacity of `other_sketch` is lower than `sketch`'s, its capacity will be
- * reduce to that of `other_sketch`.
+ * This function returns the capacity of `sketch` after merging has been performed
+ * (where this capacity is at least 1), or 0 to indicate that merging has failed because
+ * the two input sketches differ in their element size or implementation. If 0 is
+ * returned, `sketch` (and its capacity) have not been modified.
  *
- * It is also possible to perform this operation directly on the serializations,
- * by performing an XOR on its bits.
- *
- * This function is a no-op if the two input sketches do not have the same element
- * size or implementation.
+ * It is also possible to perform this operation directly on the serializations
+ * of two sketches with the same element size and capacity by performing a bitwise XOR
+ * of the serializations.
  */
-void minisketch_merge(minisketch* sketch, const minisketch* other_sketch);
+size_t minisketch_merge(minisketch* sketch, const minisketch* other_sketch);
 
 /** Decode a sketch.
  *

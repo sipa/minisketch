@@ -214,14 +214,14 @@ void minisketch_add_uint64(minisketch* sketch, uint64_t element) {
     s->Add(element);
 }
 
-void minisketch_merge(minisketch* sketch, const minisketch* other_sketch) {
+size_t minisketch_merge(minisketch* sketch, const minisketch* other_sketch) {
     Sketch* s1 = (Sketch*)sketch;
     const Sketch* s2 = (const Sketch*)other_sketch;
     s1->Check();
     s2->Check();
-    if (s1->Bits() != s2->Bits()) return;
-    if (s1->Implementation() != s2->Implementation()) return;
-    s1->Merge(s2);
+    if (s1->Bits() != s2->Bits()) return 0;
+    if (s1->Implementation() != s2->Implementation()) return 0;
+    return s1->Merge(s2);
 }
 
 ssize_t minisketch_decode(const minisketch* sketch, size_t max_elements, uint64_t* output) {

@@ -405,7 +405,7 @@ public:
         return roots.size();
     }
 
-    void Merge(const Sketch* other_sketch) override
+    size_t Merge(const Sketch* other_sketch) override
     {
         // Sad cast. This is safe only because the caller code in minisketch.cpp checks
         // that implementation and field size match.
@@ -414,6 +414,7 @@ public:
         for (size_t i = 0; i < m_syndromes.size(); ++i) {
             m_syndromes[i] += other->m_syndromes[i];
         }
+        return m_syndromes.size();
     }
 
     void SetSeed(uint64_t seed) override
