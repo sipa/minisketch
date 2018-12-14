@@ -156,6 +156,16 @@ uint32_t minisketch_implementation(const minisketch* sketch) {
     return s->Implementation();
 }
 
+minisketch* minisketch_clone(const minisketch* sketch) {
+    const Sketch* s = (const Sketch*)sketch;
+    s->Check();
+    Sketch* r = (Sketch*) minisketch_create(s->Bits(), s->Implementation(), s->Syndromes());
+    if (r) {
+        r->Merge(s);
+    }
+    return (minisketch*) r;
+}
+
 void minisketch_destroy(minisketch* sketch) {
     if (sketch) {
         Sketch* s = (Sketch*)sketch;

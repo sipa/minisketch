@@ -55,6 +55,12 @@ uint32_t minisketch_implementation(const minisketch* sketch);
  */
 void minisketch_set_seed(minisketch* sketch, uint64_t seed);
 
+/** Clone a sketch.
+ *
+ * The result must be destroyed using minisketch_destroy.
+ */
+minisketch* minisketch_clone(const minisketch* sketch);
+
 /** Destroy a sketch.
  *
  * The pointer that was passed in may not be used anymore afterwards.
