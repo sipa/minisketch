@@ -4,6 +4,8 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
 
+#include <new>
+
 #include "../include/minisketch.h"
 #include "sketch.h"
 
@@ -130,12 +132,21 @@ uint32_t minisketch_implementation_max() {
 }
 
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity) {
-    Sketch* sketch = Construct(bits, implementation);
-    if (sketch) {
-        sketch->Init(capacity);
-        sketch->Ready();
+    try {
+        Sketch* sketch = Construct(bits, implementation);
+        if (sketch) {
+            try {
+                sketch->Init(capacity);
+            } catch (std::bad_alloc& ba) {
+                delete sketch;
+                throw;
+            }
+            sketch->Ready();
+        }
+        return (minisketch*)sketch;
+    } catch (std::bad_alloc& ba) {
+        return nullptr;
     }
-    return (minisketch*)sketch;
 }
 
 uint32_t minisketch_bits(const minisketch* sketch) {
