@@ -138,6 +138,24 @@ minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t cap
     return (minisketch*)sketch;
 }
 
+uint32_t minisketch_bits(const minisketch* sketch) {
+    const Sketch* s = (const Sketch*)sketch;
+    s->Check();
+    return s->Bits();
+}
+
+size_t minisketch_capacity(const minisketch* sketch) {
+    const Sketch* s = (const Sketch*)sketch;
+    s->Check();
+    return s->Syndromes();
+}
+
+uint32_t minisketch_implementation(const minisketch* sketch) {
+    const Sketch* s = (const Sketch*)sketch;
+    s->Check();
+    return s->Implementation();
+}
+
 void minisketch_destroy(minisketch* sketch) {
     if (sketch) {
         Sketch* s = (Sketch*)sketch;
