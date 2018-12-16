@@ -70,6 +70,8 @@ void minisketch_deserialize(minisketch* sketch, const unsigned char* input);
  */
 void minisketch_add_uint64(minisketch* sketch, uint64_t element);
 
+void minisketch_add_bytes(minisketch* sketch, const unsigned char* element);
+
 /** Merge the elements of another sketch into this sketch.
  *
  * The resulting sketch will contain every element that existed in one but not

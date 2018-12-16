@@ -371,6 +371,13 @@ public:
         AddToOddSyndromes(m_syndromes, elem);
     }
 
+    void AddBytes(const unsigned char* bytes) override
+    {
+        BitReader reader(bytes);
+        F elem = F::Deserialize(reader);
+        AddToOddSyndromes(m_syndromes, elem);
+    }
+
     void Serialize(unsigned char* ptr) const override
     {
         BitWriter writer(ptr);

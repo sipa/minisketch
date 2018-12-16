@@ -31,6 +31,7 @@ public:
 
     virtual void Init(int syndromes) = 0;
     virtual void Add(uint64_t element) = 0;
+    virtual void AddBytes(const unsigned char* element) = 0;
     virtual void Serialize(unsigned char*) const = 0;
     virtual void Deserialize(const unsigned char*) = 0;
     virtual void Merge(const Sketch* other_sketch) = 0;

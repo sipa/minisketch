@@ -122,6 +122,14 @@ public:
 template<int BITS, typename I>
 constexpr inline I Mask() { return ((I((I(-1)) << (std::numeric_limits<I>::digits - BITS))) >> (std::numeric_limits<I>::digits - BITS)); }
 
+template<typename I>
+struct DoubleInt
+{
+    I low, high;
+
+    explicit DoubleInt(I val) : low(val), high(0) {}
+};
+
 template<typename I, int BITS>
 class BitsInt {
 private:
@@ -186,6 +194,66 @@ public:
     }
 };
 
+template<typename I, int LBITS, int HBITS>
+class BitsDoubleInt {
+private:
+    static_assert(std::is_integral<I>::value && std::is_unsigned<I>::value, "DoubleBitsInt requires an unsigned integer type");
+    static_assert(LBITS > 0 && HBITS >0 && LBITS <= std::numeric_limits<I>::digits && HBITS <= std::numeric_limits<I>::digits, "DoubleBits requires 1 <= {LBITS, HBITS} <= representation type size");
+
+    static constexpr I LMASK = Mask<LBITS, I>();
+    static constexpr I HMASK = Mask<HBITS, I>();
+
+public:
+
+    typedef DoubleInt<I> Repr;
+
+    static constexpr int SIZE = LBITS + HBITS;
+
+    static void inline Swap(Repr& a, Repr& b) {
+        std::swap(a.low, b.low);
+        std::swap(a.high, b.high);
+    }
+
+    static constexpr inline bool IsZero(const Repr& a) { return a.low == 0 && a.high == 0; }
+    static constexpr inline Repr Mask(const Repr& a) { return Repr{a.low & LMASK, a.high & HMASK}; }
+    static constexpr inline Repr Shift(const Repr& a, int bits) { return Repr{(a.low << bits) & LMASK, ((a.high << bits) | (a.low >> (LBITS - bits))) & HMASK}; }
+    static constexpr inline Repr UnsafeShift(const Repr& a, int bits) { return Repr{(a.low << bits) & LMASK, (a.high << bits) | (a.low >> (LBITS - bits))}; }
+
+    template<int Offset, int Count>
+    static constexpr inline int MidBits(const Repr& val) {
+        static_assert(Count > 0, "Bla");
+        static_assert(Count + Offset <= LBITS + HBITS, "Blu");
+        return ((Count + Offset <= LBITS) ?
+            (val.low >> Offset) :
+            ((Offset >= LBITS) ?
+                (val.high >> (Offset - LBITS)) :
+                ((val.low >> Offset) | (val.high << (LBITS - Offset))))) & ((I(1) << Count) - 1);
+    }
+
+    template<int Count>
+    static constexpr inline int TopBits(const Repr& val) {
+        static_assert(Count > 0, "Bli");
+        static_assert(Count <= HBITS, "Ble");
+        return (val.high >> (HBITS - Count));
+    }
+
+    static inline constexpr Repr CondXorWith(const Repr& val, bool cond, const Repr& v) {
+        return Repr{val.low ^ (-I(cond) & v.low), val.high ^ (-I(cond) & v.high)};
+    }
+
+    template<I MOD>
+    static inline constexpr I CondXorWith(const Repr& val, bool cond) {
+        return Repr{val.low ^ (-I(cond) & MOD), val.high};
+    }
+
+    static inline int Bits(const Repr& val, int max) {
+        if (max > LBITS && val.high) {
+            return BitsInt<I, HBITS>::Bits(val.high, max - LBITS) + LBITS;
+        }
+        return BitsInt<I, LBITS>::Bits(val.low, max);
+    }
+};
+
 /** Class which implements a stateless LFSR for generic moduli. */
 template<typename F, uint32_t MOD>
 struct LFSR {
@@ -200,7 +268,7 @@ struct LFSR {
 template<typename I, int N, typename L, typename F, int K> struct GFMulHelper;
 template<typename I, int N, typename L, typename F> struct GFMulHelper<I, N, L, F, 0>
 {
-    static inline constexpr I Run(const I& a, const I& b) { return I(0); }
+    static inline constexpr I Run(const I& a, const I& b) { return I(); }
 };
 template<typename I, int N, typename L, typename F, int K> struct GFMulHelper
 {
@@ -215,10 +283,10 @@ template<typename I, typename F, int BITS, uint32_t MOD>
 inline I InvExtGCD(I x)
 {
     if (F::IsZero(x)) return x;
-    I t(0), newt(1);
+    I t(), newt(1);
     I r(MOD), newr = x;
     int rlen = BITS + 1, newrlen = F::Bits(newr, BITS);
-    while (newr) {
+    while (!F::IsZero(newr)) {
         int q = rlen - newrlen;
         r ^= F::Shift(newr, q);
         t ^= F::UnsafeShift(newt, q);
