@@ -283,7 +283,7 @@ template<typename I, typename F, int BITS, uint32_t MOD>
 inline I InvExtGCD(I x)
 {
     if (F::IsZero(x)) return x;
-    I t(), newt(1);
+    I t(0), newt(1);
     I r(MOD), newr = x;
     int rlen = BITS + 1, newrlen = F::Bits(newr, BITS);
     while (!F::IsZero(newr)) {
@@ -309,11 +309,11 @@ template<typename I, typename F, int BITS, I (*MUL)(I, I), I (*SQR)(I), I (*SQR2
 inline I InvLadder(I x1)
 {
     static constexpr int INV_EXP = BITS - 1;
-    I x2 = (INV_EXP >= 2) ? MUL(SQR(x1), x1) : I();
-    I x4 = (INV_EXP >= 4) ? MUL(SQR2(x2), x2) : I();
-    I x8 = (INV_EXP >= 8) ? MUL(SQR4(x4), x4) : I();
-    I x16 = (INV_EXP >= 16) ? MUL(SQR8(x8), x8) : I();
-    I x32 = (INV_EXP >= 32) ? MUL(SQR16(x16), x16) : I();
+    I x2 = (INV_EXP >= 2) ? MUL(SQR(x1), x1) : I(0);
+    I x4 = (INV_EXP >= 4) ? MUL(SQR2(x2), x2) : I(0);
+    I x8 = (INV_EXP >= 8) ? MUL(SQR4(x4), x4) : I(0);
+    I x16 = (INV_EXP >= 16) ? MUL(SQR8(x8), x8) : I(0);
+    I x32 = (INV_EXP >= 32) ? MUL(SQR16(x16), x16) : I(0);
     I r;
     if (INV_EXP >= 32) {
         r = x32;
