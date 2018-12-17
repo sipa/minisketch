@@ -28,7 +28,8 @@ uint32_t minisketch_implementation_max();
 
 /** Construct a sketch for a given element size, implementation and capacity.
  *
- * If the combination of `bits` and `implementation` is unavailable, NULL is returned.
+ * If the combination of `bits` and `implementation` is unavailable, or if
+ * `capacity` is 0, NULL is returned.
  * If the result is not NULL, it must be destroyed using minisketch_destroy.
  */
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity);
