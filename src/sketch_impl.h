@@ -362,7 +362,7 @@ public:
         m_basis = F::FromSeed(dist(rng));
     }
 
-    size_t Syndromes() const { return m_syndromes.size(); }
+    size_t Syndromes() const override { return m_syndromes.size(); }
     void Init(int count) override { m_syndromes.assign(count, F()); }
 
     void Add(uint64_t val) override
