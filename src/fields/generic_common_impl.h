@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <random>
 
+#include "../util.h"
 #include "../int_utils.h"
 #include "../lintrans.h"
 
@@ -47,6 +48,8 @@ public:
         explicit Multiplier(Field a) { table.template Build<L::Call>(a.m_val); }
         constexpr inline Field operator()(Field a) const { return Field(table.template Map<O>(a.m_val)); }
     };
+
+    typedef Multiplier NonZeroMultiplier;
 
     inline friend constexpr Field operator+(Field a, Field b) { return Field(a.m_val ^ b.m_val); }
     inline Field& operator+=(Field a) { m_val ^= a.m_val; return *this; }

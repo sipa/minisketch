@@ -137,6 +137,8 @@ public:
         constexpr GenField operator()(GenField a) const { return GenField(Mul(m_val, a.m_val)); }
     };
 
+    typedef Multiplier NonZeroMultiplier;
+
     /** Compute the square of a. */
     inline constexpr GenField Sqr() const { return GenField(Sqr1(m_val)); }
 
