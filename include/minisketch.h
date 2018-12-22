@@ -33,6 +33,15 @@ uint32_t minisketch_implementation_max();
  */
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity);
 
+/** Get the element size of a sketch in bits. */
+uint32_t minisketch_bits(const minisketch* sketch);
+
+/** Get the capacity of a sketch. */
+size_t minisketch_capacity(const minisketch* sketch);
+
+/** Get the implementation of a sketch. */
+uint32_t minisketch_implementation(const minisketch* sketch);
+
 /** Set the seed for randomizing algorithm choices to a fixed value.
  *
  * By default, sketches are initialized with a random seed. This is important
@@ -45,6 +54,12 @@ minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t cap
  * used. It is only intended for testing.
  */
 void minisketch_set_seed(minisketch* sketch, uint64_t seed);
+
+/** Clone a sketch.
+ *
+ * The result must be destroyed using minisketch_destroy.
+ */
+minisketch* minisketch_clone(const minisketch* sketch);
 
 /** Destroy a sketch.
  *
