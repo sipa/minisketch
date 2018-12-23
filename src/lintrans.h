@@ -112,7 +112,7 @@ public:
     static constexpr int BITS = N;
     constexpr RecLinTrans(const I* p, Num<BITS>) : trans(p, Num<N>()) {}
     constexpr RecLinTrans() = default;
-    constexpr RecLinTrans(std::initializer_list<I> init) : RecLinTrans(init.begin(), Num<BITS>()) {}
+    constexpr RecLinTrans(const I (&init)[BITS]) : RecLinTrans(init, Num<BITS>()) {}
 
     template<typename O, int P = 0>
     inline I constexpr Map(I a) const { return trans.template TopMap<O, P>(a); }
@@ -128,7 +128,7 @@ public:
     static constexpr int BITS = RecLinTrans<I, X...>::BITS + N;
     constexpr RecLinTrans(const I* p, Num<BITS>) : trans(p, Num<N>()), rec(p + N, Num<BITS - N>()) {}
     constexpr RecLinTrans() = default;
-    constexpr RecLinTrans(std::initializer_list<I> init) : RecLinTrans(init.begin(), Num<BITS>()) {}
+    constexpr RecLinTrans(const I (&init)[BITS]) : RecLinTrans(init, Num<BITS>()) {}
 
     template<typename O, int P = 0>
     inline I constexpr Map(I a) const { return trans.template Map<O, P>(a) ^ rec.template Map<O, P + N>(a); }

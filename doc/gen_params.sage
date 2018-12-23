@@ -9,7 +9,6 @@ This script selects the finite fields used by minisketch
 The output (after formatting) can be found in src/fields/*.cpp.
 
 """
-
 B.<b> = GF(2)
 P.<p> = B[]
 
@@ -258,8 +257,8 @@ def print_result(bits, style):
             loadtbl = "&LOAD_TABLE_%s" % table_id
             savetbl = "&SAVE_TABLE_%s" % table_id
             if include_table:
-                print("constexpr %s LOAD_TABLE_%s{%s};" % (ctyp, table_id, ", ".join([fmt(x,typ) for x in ctables[0]])))
-                print("constexpr %s SAVE_TABLE_%s{%s};" % (ctyp, table_id, ", ".join([fmt(x,typ) for x in ctables[1]])))
+                print("constexpr %s LOAD_TABLE_%s({%s});" % (ctyp, table_id, ", ".join([fmt(x,typ) for x in ctables[0]])))
+                print("constexpr %s SAVE_TABLE_%s({%s});" % (ctyp, table_id, ", ".join([fmt(x,typ) for x in ctables[1]])))
         else:
             ctyp = "IdTrans"
             loadtbl = "&ID_TRANS"
@@ -268,7 +267,7 @@ def print_result(bits, style):
         assert(modulus == nmodulus)
 
     if include_table:
-        print("constexpr %s SQR_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 1)])))
+        print("constexpr %s SQR_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 1)])))
     if multi_sqr:
         # Repeated squaring is a linearised polynomial so in F(2^n) it is
         #  F(2) linear and can be computed by a simple bit-matrix.
@@ -280,22 +279,22 @@ def print_result(bits, style):
         sqr16 = "nullptr"
         if ((bits - 1) >= 4):
             if include_table:
-                print("constexpr %s SQR2_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 2)])))
+                print("constexpr %s SQR2_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 2)])))
             sqr2 = "&SQR2_TABLE_%s" % table_id
         if ((bits - 1) >= 8):
             if include_table:
-                print("constexpr %s SQR4_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 4)])))
+                print("constexpr %s SQR4_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 4)])))
             sqr4 = "&SQR4_TABLE_%s" % table_id
         if ((bits - 1) >= 16):
             if include_table:
-                print("constexpr %s SQR8_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 8)])))
+                print("constexpr %s SQR8_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 8)])))
             sqr8 = "&SQR8_TABLE_%s" % table_id
         if ((bits - 1) >= 32):
             if include_table:
-                print("constexpr %s SQR16_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 16)])))
+                print("constexpr %s SQR16_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 16)])))
             sqr16 = "&SQR16_TABLE_%s" % table_id
     if include_table:
-        print("constexpr %s QRT_TABLE_%s{%s};" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in qrt_table(F, f, bits)])))
+        print("constexpr %s QRT_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in qrt_table(F, f, bits)])))
 
     modulus_weight = modulus.hamming_weight()
     modulus_degree = (modulus - p**bits).degree()
