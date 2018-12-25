@@ -13,6 +13,8 @@
 #include <cpuid.h>
 #endif
 
+Sketch* ConstructSmall(int bits, int implementation);
+
 Sketch* ConstructGeneric1Byte(int bits, int implementation);
 Sketch* ConstructGeneric2Bytes(int bits, int implementation);
 Sketch* ConstructGeneric3Bytes(int bits, int implementation);
@@ -45,6 +47,7 @@ namespace {
 
 enum class FieldImpl {
     GENERIC = 0,
+    SMALL,
 #ifdef __x86_64__
     CLMUL,
     CLMUL_TRI,
@@ -75,6 +78,8 @@ Sketch* Construct(int bits, int impl)
         default:
             return nullptr;
         }
+    case FieldImpl::SMALL:
+        return ConstructSmall(bits, impl);
 #ifdef __x86_64__
     case FieldImpl::CLMUL:
     case FieldImpl::CLMUL_TRI: {
@@ -124,7 +129,7 @@ int minisketch_bits_supported(uint32_t bits) {
 }
 
 uint32_t minisketch_implementation_max() {
-    uint32_t ret = 0;
+    uint32_t ret = 1;
 #ifdef __x86_64__
     ret += 2;
 #endif
