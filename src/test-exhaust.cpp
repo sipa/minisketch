@@ -166,10 +166,14 @@ int main(void) {
     }
 
     int counts[65] = {0};
+    // Initialize capacities to 1 because a 0 capacity is not allowed.
+    for (int bits = 0; bits < 65; ++bits) {
+        counts[bits] = 1;
+    }
     for (int weight = 0; weight <= 40; weight += 1) {
         for (int bits = 2; bits <= 32; ++bits) {
             int count = counts[bits];
-            while (count < (1 << bits) && count < (1 << bits) && count * bits <= weight) {
+            while (count < (1 << bits) && count * bits <= weight) {
                 auto ret = TestAll(bits, 0, count, 4);
                 auto ret2 = TestAll(bits, 1, count, 4);
                 auto ret3 = TestAll(bits, 2, count, 4);
