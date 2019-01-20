@@ -83,6 +83,10 @@ void minisketch_deserialize(minisketch* sketch, const unsigned char* input);
  * bits of the element are dropped. More precisely, if the element size of
  * `sketch` is b bits, then this function adds the unsigned integer represented
  * by the b least significant bits of `element` to `sketch`.
+ * 
+ * If the element to be added is 0 (after potentially dropping the most significant
+ * bits), then this function is a no-op. Sketches cannot contain an element with
+ * the value 0.
  */
 void minisketch_add_uint64(minisketch* sketch, uint64_t element);
 
