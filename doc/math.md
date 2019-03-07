@@ -41,11 +41,11 @@ To make reasoning about these power series easier, notice that the series for a 
 
 You can verify this by seeing that every coefficient except the constant one gets cancelled out by the multiplication. This can be generalized to the series for multiple set elements. For two elements we have:
 
-* *(1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) S({m<sub>1</sub>,m<sub>2</sub>}) = (1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) (F(m<sub>1</sub>) + F(m<sub>2</sub>)) = (1 - m<sub>2</sub>x) + (1 - m<sub>1</sub>x)*
+* *(1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) S({m<sub>1</sub>,m<sub>2</sub>}) = (1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) (S(m<sub>1</sub>) + S(m<sub>2</sub>)) = (1 - m<sub>2</sub>x) + (1 - m<sub>1</sub>x)*
 
 And for three:
 
-* *(1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) (1 - m<sub>3</sub>x) S({m<sub>1</sub>,m<sub>2</sub>,m<sub>3</sub>}) = (1 - m<sub>1</sub>x) (1 - m<sub>3</sub>x) (S(m<sub>1</sub>) + S(m<sub>2</sub>) + S(m<sub>3</sub>)) = (1 - m<sub>2</sub>x)(1 - m<sub>3</sub>x) + (1 - m<sub>1</sub>x)(1 - m<sub>3</sub>x) + (1 - m<sub>2</sub>x)(1 - m<sub>3</sub>x)*
+* *(1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) (1 - m<sub>3</sub>x) S({m<sub>1</sub>,m<sub>2</sub>,m<sub>3</sub>}) = (1 - m<sub>1</sub>x) (1 - m<sub>2</sub>x) (1 - m<sub>3</sub>x) (S(m<sub>1</sub>) + S(m<sub>2</sub>) + S(m<sub>3</sub>)) = (1 - m<sub>2</sub>x)(1 - m<sub>3</sub>x) + (1 - m<sub>1</sub>x)(1 - m<sub>3</sub>x) + (1 - m<sub>1</sub>x)(1 - m<sub>2</sub>x)*
 
 In each case, we notice that multiplying *S(M)* with *(1 - m<sub>i</sub>x)* for each element *m<sub>i</sub> &isin; M* results in a polynomial of degree *n-1*.
 
