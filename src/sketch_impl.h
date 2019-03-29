@@ -24,7 +24,7 @@ void PolyMod(const std::vector<F>& mod, std::vector<F>& val) {
         F term = val.back();
         val.pop_back();
         if (!term.IsZero()) {
-            typename F::Multiplier mul(term);
+            typename F::NonZeroMultiplier mul(term);
             for (size_t x = 0; x < mod.size() - 1; ++x) {
                 val[val.size() - modsize + 1 + x] += mul(mod[x]);
             }
@@ -49,7 +49,7 @@ void DivMod(const std::vector<F>& mod, std::vector<F>& val, std::vector<F>& div)
         div[val.size() - modsize] = term;
         val.pop_back();
         if (!term.IsZero()) {
-            typename F::Multiplier mul(term);
+            typename F::NonZeroMultiplier mul(term);
             for (size_t x = 0; x < mod.size() - 1; ++x) {
                 val[val.size() - modsize + 1 + x] += mul(mod[x]);
             }
@@ -63,7 +63,7 @@ F MakeMonic(std::vector<F>& a) {
     CHECK_SAFE(!a.back().IsZero());
     if (a.back().IsOne()) return F::Zero();
     auto inv = a.back().Inv();
-    typename F::Multiplier mul(inv);
+    typename F::NonZeroMultiplier mul(inv);
     a.back() = F::One();
     for (size_t i = 0; i < a.size() - 1; ++i) {
         a[i] = mul(a[i]);
@@ -307,7 +307,7 @@ std::vector<F> BerlekampMassey(const std::vector<F>& syndromes, size_t max_degre
                 tmp = current;
                 current.resize(prev.size() + x);
             }
-            typename F::Multiplier mul(discrepancy * b_inv);
+            typename F::NonZeroMultiplier mul(discrepancy * b_inv);
             for (size_t i = 0; i < prev.size(); ++i) current[i + x] += mul(prev[i]);
             if (swap) {
                 std::swap(prev, tmp);
@@ -333,8 +333,9 @@ std::vector<F> ReconstructAllSyndromes(const std::vector<F>& odd_syndromes) {
 
 template<typename F>
 void AddToOddSyndromes(std::vector<F>& osyndromes, F data) {
+    if (data.IsZero()) return;
     auto sqr = data.Sqr();
-    typename F::Multiplier mul(sqr);
+    typename F::NonZeroMultiplier mul(sqr);
     for (auto& osyndrome : osyndromes) {
         osyndrome += data;
         data = mul(data);

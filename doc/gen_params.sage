@@ -128,8 +128,8 @@ def conv_tables(F, NF, bits):
     return (ret, ret2)
 
 def fmt(i,typ):
-    if i == 0:
-        return "0"
+    if i < 1000000000:
+        return "%i" % i
     else:
         return "0x%x" % i
 
@@ -147,7 +147,8 @@ def lintranstype(typ, bits, maxtbl):
 INT=0
 CLMUL=1
 CLMUL_TRI=2
-MD=3
+SMALL=3
+MD=4
 
 def print_modulus_md(mod):
     ret = ""
@@ -169,7 +170,7 @@ def pick_modulus(bits, style):
     # Choose the lexicographicly-first lowest-weight modulus
     #  optionally subject to implementation specific constraints.
     moduli = compute_moduli(bits)
-    if style == INT or style == MD:
+    if style == INT or style == SMALL or style == MD:
         multi_sqr = False
         need_trans = False
     elif style == CLMUL:
@@ -194,19 +195,31 @@ def pick_modulus(bits, style):
 
 def print_result(bits, style):
     if style == INT:
+        log_table = False
+        single_sqr = True
         multi_sqr = False
         need_trans = False
         table_id = "%i" % bits
     elif style == MD:
         pass
     elif style == CLMUL:
+        log_table = False
+        single_sqr = True
         multi_sqr = True
         need_trans = True
         table_id = "%i" % bits
     elif style == CLMUL_TRI:
+        log_table = False
+        single_sqr = True
         multi_sqr = True
         need_trans = True
         table_id = "TRI%i" % bits
+    elif style == SMALL:
+        log_table = True
+        single_sqr = False
+        multi_sqr = False
+        need_trans = False
+        table_id = "%i" % bits
     else:
         assert(False)
 
@@ -234,7 +247,7 @@ def print_result(bits, style):
     F.<f> = GF(2**bits, modulus=modulus)
 
     include_table = True
-    if style != INT and style != CLMUL:
+    if style == CLMUL_TRI:
         cmodulus = pick_modulus(bits, CLMUL)
         if cmodulus == modulus:
             include_table = False
@@ -266,7 +279,7 @@ def print_result(bits, style):
     else:
         assert(modulus == nmodulus)
 
-    if include_table:
+    if include_table and single_sqr:
         print("constexpr %s SQR_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 1)])))
     if multi_sqr:
         # Repeated squaring is a linearised polynomial so in F(2^n) it is
@@ -296,6 +309,18 @@ def print_result(bits, style):
     if include_table:
         print("constexpr %s QRT_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in qrt_table(F, f, bits)])))
 
+    if log_table:
+        for baseval in range(2,2**bits):
+            try:
+                base = F.fetch_int(baseval)
+                logs = [2**bits-1] + [discrete_log(F.fetch_int(i), base) for i in range(1,2**bits)]
+                exps = [(base**i).integer_representation() for i in range(2**bits - 1)] + [1]
+                break
+            except:
+                continue
+        print("constexpr %s LOG_TABLE_%s[] = {%s};" % (typ, table_id, ", ".join([fmt(x,typ) for x in logs])))
+        print("constexpr %s EXP_TABLE_%s[] = {%s};" % (typ, table_id, ", ".join([fmt(x,typ) for x in exps])))
+
     modulus_weight = modulus.hamming_weight()
     modulus_degree = (modulus - p**bits).degree()
     modulus_int = (modulus - p**bits).change_ring(ZZ)(2)
@@ -304,12 +329,19 @@ def print_result(bits, style):
 
     if style == INT:
         print("typedef Field<%s, %i, %i, %s, %s, &SQR_TABLE_%s, &QRT_TABLE_%s%s> Field%i;" % (typ, bits, modulus_int, rtyp, ttyp, table_id, table_id, lfsr, bits))
+    elif style == SMALL:
+        print("typedef Field<%s, %i, %i, LOG_TABLE_%s, EXP_TABLE_%s, %s, &QRT_TABLE_%s> Field%i;" % (typ, bits, modulus_int, table_id, table_id, rtyp, table_id, bits))
     elif style == CLMUL:
         print("typedef Field<%s, %i, %i, %s, &SQR_TABLE_%s, %s, %s, %s, %s, &QRT_TABLE_%s, %s, %s, %s%s> Field%i;" % (typ, bits, modulus_int, rtyp, table_id, sqr2, sqr4, sqr8, sqr16, table_id, ctyp, loadtbl, savetbl, lfsr, bits))
     elif style == CLMUL_TRI:
         print("typedef FieldTri<%s, %i, %i, %s, &SQR_TABLE_%s, %s, %s, %s, %s, &QRT_TABLE_%s, %s, %s, %s> FieldTri%i;" % (typ, bits, modulus_degree, rtyp, table_id, sqr2, sqr4, sqr8, sqr16, table_id, ctyp, loadtbl, savetbl, bits))
     else:
         assert(False)
+
+for bits in range(2, 17):
+    print("// %i bit field" % bits)
+    print_result(bits, SMALL)
+    print("")
 
 for bits in range(2, 65):
     print("// %i bit field" % bits)
