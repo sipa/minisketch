@@ -66,7 +66,13 @@ public:
         }
         while (bits >= 8) {
             *(out++) = val & 255;
-            val >>= 8;
+
+            if (sizeof(val) > 8) {
+                val >>= 8;
+            } else {
+                val = 0;
+            }
+
             bits -= 8;
         }
         state |= ((val & ((I(1) << bits) - 1)) << offset);
