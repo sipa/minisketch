@@ -67,7 +67,7 @@ public:
         while (bits >= 8) {
             *(out++) = val & 255;
 
-            if (sizeof(val) > 8) {
+            if (sizeof(val) > 1) {
                 val >>= 8;
             } else {
                 val = 0;
