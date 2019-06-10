@@ -9,7 +9,7 @@
 #include "../include/minisketch.h"
 #include "sketch.h"
 
-#ifdef __x86_64__
+#ifdef HAVE_CLMUL
 #include <cpuid.h>
 #endif
 
@@ -22,7 +22,7 @@ Sketch* ConstructGeneric6Bytes(int bits, int implementation);
 Sketch* ConstructGeneric7Bytes(int bits, int implementation);
 Sketch* ConstructGeneric8Bytes(int bits, int implementation);
 
-#ifdef __x86_64__
+#ifdef HAVE_CLMUL
 Sketch* ConstructClMul1Byte(int bits, int implementation);
 Sketch* ConstructClMul2Bytes(int bits, int implementation);
 Sketch* ConstructClMul3Bytes(int bits, int implementation);
@@ -45,7 +45,7 @@ namespace {
 
 enum class FieldImpl {
     GENERIC = 0,
-#ifdef __x86_64__
+#ifdef HAVE_CLMUL
     CLMUL,
     CLMUL_TRI,
 #endif
@@ -75,7 +75,7 @@ Sketch* Construct(int bits, int impl)
         default:
             return nullptr;
         }
-#ifdef __x86_64__
+#ifdef HAVE_CLMUL
     case FieldImpl::CLMUL:
     case FieldImpl::CLMUL_TRI: {
         uint32_t eax, ebx, ecx, edx;
@@ -125,7 +125,7 @@ int minisketch_bits_supported(uint32_t bits) {
 
 uint32_t minisketch_implementation_max() {
     uint32_t ret = 0;
-#ifdef __x86_64__
+#ifdef HAVE_CLMUL
     ret += 2;
 #endif
     return ret;

@@ -7,8 +7,6 @@
 #ifndef _MINISKETCH_FIELDS_CLMUL_COMMON_IMPL_H_
 #define _MINISKETCH_FIELDS_CLMUL_COMMON_IMPL_H_ 1
 
-#ifdef __x86_64
-
 #include <stdint.h>
 #include <x86intrin.h>
 
@@ -173,7 +171,5 @@ template<typename I, int B, int POS, typename F, const F* SQR, const F* SQR2, co
 using FieldTri = GenField<I, B, I(1) + (I(1) << POS), MulTrinomial<I, B, POS>, F, SQR, SQR2, SQR4, SQR8, SQR16, QRT, T, LOAD, SAVE>;
 
 }
-
-#endif
 
 #endif
