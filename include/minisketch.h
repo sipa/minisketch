@@ -24,7 +24,7 @@ int minisketch_bits_supported(uint32_t bits);
  * function call, inclusive. Note that not every combination of implementation
  * and element size may exist (see further).
 */
-uint32_t minisketch_implementation_max();
+uint32_t minisketch_implementation_max(void);
 
 /** Construct a sketch for a given element size, implementation and capacity.
  *
