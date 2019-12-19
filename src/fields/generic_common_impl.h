@@ -44,7 +44,7 @@ public:
     inline constexpr Elem Qrt(Elem a) const { return QRT->template Map<O>(a); }
 
     /** Compute the inverse of x1. */
-    Elem Inv(Elem a) const { return InvExtGCD<I, O, B, MOD>(a); }
+    Elem Inv(Elem a) const { return InvExtGCD<I, O>(a, B, MOD); }
 
     /** Generate a random field element. */
     Elem FromSeed(uint64_t seed) const {

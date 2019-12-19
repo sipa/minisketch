@@ -211,13 +211,13 @@ template<typename I, int N, typename L, typename F, int K> struct GFMulHelper
 template<typename I, int N, typename L, typename F> inline constexpr I GFMul(const I& a, const I& b) { return GFMulHelper<I, N, L, F, N>::Run(a, b); }
 
 /** Compute the inverse of x using an extgcd algorithm. */
-template<typename I, typename F, int BITS, uint32_t MOD>
-inline I InvExtGCD(I x)
+template<typename I, typename F>
+inline I InvExtGCD(I x, int bits, uint32_t mod)
 {
     if (F::IsZero(x)) return x;
     I t(0), newt(1);
-    I r(MOD), newr = x;
-    int rlen = BITS + 1, newrlen = F::Bits(newr, BITS);
+    I r(mod), newr = x;
+    int rlen = bits + 1, newrlen = F::Bits(newr, bits);
     while (newr) {
         int q = rlen - newrlen;
         r ^= F::Shift(newr, q);
