@@ -96,23 +96,23 @@ typedef Field<uint32_t, 32, 141, StatTable32, &SQR_TABLE_32, &SQR2_TABLE_32, &SQ
 
 Sketch* ConstructClMul4Bytes(int bits, int implementation) {
     switch (bits) {
-    case 25: return new SketchImpl<Field25>(implementation);
-    case 26: return new SketchImpl<Field26>(implementation);
-    case 27: return new SketchImpl<Field27>(implementation);
-    case 29: return new SketchImpl<Field29>(implementation);
-    case 31: return new SketchImpl<Field31>(implementation);
-    case 32: return new SketchImpl<Field32>(implementation);
+    case 25: return new SketchImpl<Field25>(implementation, 25);
+    case 26: return new SketchImpl<Field26>(implementation, 26);
+    case 27: return new SketchImpl<Field27>(implementation, 27);
+    case 29: return new SketchImpl<Field29>(implementation, 29);
+    case 31: return new SketchImpl<Field31>(implementation, 31);
+    case 32: return new SketchImpl<Field32>(implementation, 32);
     }
     return nullptr;
 }
 
 Sketch* ConstructClMulTri4Bytes(int bits, int implementation) {
     switch (bits) {
-    case 25: return new SketchImpl<FieldTri25>(implementation);
-    case 28: return new SketchImpl<FieldTri28>(implementation);
-    case 29: return new SketchImpl<FieldTri29>(implementation);
-    case 30: return new SketchImpl<FieldTri30>(implementation);
-    case 31: return new SketchImpl<FieldTri31>(implementation);
+    case 25: return new SketchImpl<FieldTri25>(implementation, 25);
+    case 28: return new SketchImpl<FieldTri28>(implementation, 28);
+    case 29: return new SketchImpl<FieldTri29>(implementation, 29);
+    case 30: return new SketchImpl<FieldTri30>(implementation, 30);
+    case 31: return new SketchImpl<FieldTri31>(implementation, 31);
     }
     return nullptr;
 }

@@ -105,24 +105,24 @@ typedef Field<uint64_t, 56, 149, StatTable56, &SQR_TABLE_56, &SQR2_TABLE_56, &SQ
 
 Sketch* ConstructClMul7Bytes(int bits, int implementation) {
     switch (bits) {
-    case 49: return new SketchImpl<Field49>(implementation);
-    case 50: return new SketchImpl<Field50>(implementation);
-    case 51: return new SketchImpl<Field51>(implementation);
-    case 52: return new SketchImpl<Field52>(implementation);
-    case 53: return new SketchImpl<Field53>(implementation);
-    case 54: return new SketchImpl<Field54>(implementation);
-    case 55: return new SketchImpl<Field55>(implementation);
-    case 56: return new SketchImpl<Field56>(implementation);
+    case 49: return new SketchImpl<Field49>(implementation, 49);
+    case 50: return new SketchImpl<Field50>(implementation, 50);
+    case 51: return new SketchImpl<Field51>(implementation, 51);
+    case 52: return new SketchImpl<Field52>(implementation, 52);
+    case 53: return new SketchImpl<Field53>(implementation, 53);
+    case 54: return new SketchImpl<Field54>(implementation, 54);
+    case 55: return new SketchImpl<Field55>(implementation, 55);
+    case 56: return new SketchImpl<Field56>(implementation, 56);
     }
     return nullptr;
 }
 
 Sketch* ConstructClMulTri7Bytes(int bits, int implementation) {
     switch (bits) {
-    case 49: return new SketchImpl<FieldTri49>(implementation);
-    case 52: return new SketchImpl<FieldTri52>(implementation);
-    case 54: return new SketchImpl<FieldTri54>(implementation);
-    case 55: return new SketchImpl<FieldTri55>(implementation);
+    case 49: return new SketchImpl<FieldTri49>(implementation, 49);
+    case 52: return new SketchImpl<FieldTri52>(implementation, 52);
+    case 54: return new SketchImpl<FieldTri54>(implementation, 54);
+    case 55: return new SketchImpl<FieldTri55>(implementation, 55);
     }
     return nullptr;
 }

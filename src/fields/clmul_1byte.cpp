@@ -68,20 +68,20 @@ typedef Field<uint8_t, 8, 27, StatTable8, &SQR_TABLE_8, &SQR2_TABLE_8, nullptr, 
 
 Sketch* ConstructClMul1Byte(int bits, int implementation) {
     switch (bits) {
-    case 5: return new SketchImpl<Field5>(implementation);
-    case 8: return new SketchImpl<Field8>(implementation);
+    case 5: return new SketchImpl<Field5>(implementation, 5);
+    case 8: return new SketchImpl<Field8>(implementation, 8);
     }
     return nullptr;
 }
 
 Sketch* ConstructClMulTri1Byte(int bits, int implementation) {
     switch (bits) {
-    case 2: return new SketchImpl<FieldTri2>(implementation);
-    case 3: return new SketchImpl<FieldTri3>(implementation);
-    case 4: return new SketchImpl<FieldTri4>(implementation);
-    case 5: return new SketchImpl<FieldTri5>(implementation);
-    case 6: return new SketchImpl<FieldTri6>(implementation);
-    case 7: return new SketchImpl<FieldTri7>(implementation);
+    case 2: return new SketchImpl<FieldTri2>(implementation, 2);
+    case 3: return new SketchImpl<FieldTri3>(implementation, 3);
+    case 4: return new SketchImpl<FieldTri4>(implementation, 4);
+    case 5: return new SketchImpl<FieldTri5>(implementation, 5);
+    case 6: return new SketchImpl<FieldTri6>(implementation, 6);
+    case 7: return new SketchImpl<FieldTri7>(implementation, 7);
     }
     return nullptr;
 }

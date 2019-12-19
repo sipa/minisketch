@@ -94,11 +94,6 @@ template<typename I, int B, I MOD, I (*MUL)(I, I), typename F, const F* SQR, con
     typedef BitsInt<I, B> O;
     typedef LFSR<O, MOD> L;
 
-    I m_val;
-    explicit constexpr GenField(I val) : m_val(val) {}
-
-    static inline I Mul(I a, I b) { return MUL(a, b); }
-
     static inline constexpr I Sqr1(I a) { return SQR->template Map<O>(a); }
     static inline constexpr I Sqr2(I a) { return SQR2->template Map<O>(a); }
     static inline constexpr I Sqr4(I a) { return SQR4->template Map<O>(a); }
@@ -106,62 +101,49 @@ template<typename I, int B, I MOD, I (*MUL)(I, I), typename F, const F* SQR, con
     static inline constexpr I Sqr16(I a) { return SQR16->template Map<O>(a); }
 
 public:
-    static constexpr int BITS = B;
+    typedef I Elem;
 
-    static inline constexpr GenField Zero() { return GenField(0); }
-    static inline constexpr GenField One() { return GenField(1); }
+    inline constexpr int Bits() const { return B; }
 
-    inline constexpr GenField() : m_val(0) {}
-    inline constexpr bool IsZero() const { return m_val == 0; }
-    inline constexpr bool IsOne() const { return m_val == 1; }
+    inline constexpr Elem Mul2(Elem val) const { return L::Call(val); }
 
-    inline constexpr bool friend operator==(GenField a, GenField b) { return a.m_val == b.m_val; }
-    inline constexpr bool friend operator!=(GenField a, GenField b) { return a.m_val != b.m_val; }
-    inline constexpr bool friend operator<(GenField a, GenField b) { return a.m_val < b.m_val; }
-
-    inline friend constexpr GenField operator+(GenField a, GenField b) { return GenField(a.m_val ^ b.m_val); }
-
-    inline GenField& operator+=(GenField a) { m_val ^= a.m_val; return *this; }
-
-    inline constexpr GenField Mul2() const { return GenField(L::Call(m_val)); }
-
-    inline friend GenField operator*(GenField a, GenField b) { return GenField(Mul(a.m_val, b.m_val)); }
+    inline Elem Mul(Elem a, Elem b) const { return MUL(a, b); }
 
     class Multiplier
     {
-        I m_val;
+        Elem m_val;
     public:
-        inline constexpr explicit Multiplier(GenField a) : m_val(a.m_val) {}
-        constexpr GenField operator()(GenField a) const { return GenField(Mul(m_val, a.m_val)); }
+        inline constexpr explicit Multiplier(const GenField&, Elem a) : m_val(a) {}
+        constexpr Elem operator()(Elem a) const { return MUL(m_val, a); }
     };
 
     /** Compute the square of a. */
-    inline constexpr GenField Sqr() const { return GenField(Sqr1(m_val)); }
+    inline constexpr Elem Sqr(Elem val) const { return SQR->template Map<O>(val); }
 
     /** Compute x such that x^2 + x = a (undefined result if no solution exists). */
-    inline constexpr GenField Qrt() const { return GenField(QRT->template Map<O>(m_val)); }
+    inline constexpr Elem Qrt(Elem val) const { return QRT->template Map<O>(val); }
 
     /** Compute the inverse of x1. */
-    inline GenField Inv() const { return GenField(InvLadder<I, O, B, Mul, Sqr1, Sqr2, Sqr4, Sqr8, Sqr16>(m_val)); }
+    inline Elem Inv(Elem val) const { return InvLadder<I, O, B, MUL, Sqr1, Sqr2, Sqr4, Sqr8, Sqr16>(val); }
 
     /** Generate a random field element. */
-    static GenField FromSeed(uint64_t seed) {
+    Elem FromSeed(uint64_t seed) const {
         uint64_t k0 = 0x434c4d554c466c64ull; // "CLMULFld"
         uint64_t k1 = seed;
-        uint64_t count = ((uint64_t)BITS) << 32;
+        uint64_t count = ((uint64_t)B) << 32;
         I ret;
         do {
             ret = O::Mask(I(SipHash(k0, k1, count++)));
         } while(ret == 0);
-        return GenField(LOAD->template Map<O>(ret));
+        return LOAD->template Map<O>(ret);
     }
 
-    static GenField Deserialize(BitReader& in) { return GenField(LOAD->template Map<O>(in.Read<B, I>())); }
+    Elem Deserialize(BitReader& in) const { return LOAD->template Map<O>(in.Read<B, I>()); }
 
-    void Serialize(BitWriter& out) const { out.Write<B, I>(SAVE->template Map<O>(m_val)); }
+    void Serialize(BitWriter& out, Elem val) const { out.Write<B, I>(SAVE->template Map<O>(val)); }
 
-    static constexpr GenField FromUint64(uint64_t x) { return GenField(LOAD->template Map<O>(O::Mask(I(x)))); }
-    constexpr uint64_t ToUint64() const { return uint64_t(SAVE->template Map<O>(m_val)); }
+    constexpr Elem FromUint64(uint64_t x) const { return LOAD->template Map<O>(O::Mask(I(x))); }
+    constexpr uint64_t ToUint64(Elem val) const { return uint64_t(SAVE->template Map<O>(val)); }
 };
 
 template<typename I, int B, I MOD, typename F, const F* SQR, const F* SQR2, const F* SQR4, const F* SQR8, const F* SQR16, const F* QRT, typename T, const T* LOAD, const T* SAVE>

@@ -21,64 +21,49 @@ template<typename I, int B, uint32_t MOD, typename F, typename T, const F* SQR, 
     typedef BitsInt<I, B> O;
     typedef LFSR<O, MOD> L;
 
-    I m_val;
-    explicit constexpr Field(I val) : m_val(val) {}
-
 public:
-    static constexpr int BITS = B;
+    typedef I Elem;
+    constexpr int Bits() const { return B; }
 
-    static constexpr Field Zero() { return Field(I(0)); }
-    static constexpr Field One() { return Field(I(1)); }
-
-    constexpr inline Field() : m_val(0) {}
-    constexpr inline bool IsZero() const { return m_val == 0; }
-    constexpr inline bool IsOne() const { return m_val == 1; }
-
-    constexpr inline bool friend operator==(Field a, Field b) { return a.m_val == b.m_val; }
-    constexpr inline bool friend operator!=(Field a, Field b) { return a.m_val != b.m_val; }
-    constexpr inline bool friend operator<(Field a, Field b) { return a.m_val < b.m_val; }
-
-    constexpr inline Field Mul2() const { return Field(L::Call(m_val)); }
+    constexpr inline Elem Mul2(Elem val) const { return L::Call(val); }
 
     class Multiplier
     {
         T table;
     public:
-        explicit Multiplier(Field a) { table.template Build<L::Call>(a.m_val); }
-        constexpr inline Field operator()(Field a) const { return Field(table.template Map<O>(a.m_val)); }
+        explicit Multiplier(const Field&, Elem a) { table.template Build<L::Call>(a); }
+        constexpr inline Elem operator()(Elem a) const { return table.template Map<O>(a); }
     };
 
-    inline friend constexpr Field operator+(Field a, Field b) { return Field(a.m_val ^ b.m_val); }
-    inline Field& operator+=(Field a) { m_val ^= a.m_val; return *this; }
-    friend Field operator*(Field a, Field b) { return Field(GFMul<I, B, L, O>(a.m_val, b.m_val)); }
+    Elem Mul(Elem a, Elem b) const { return GFMul<I, B, L, O>(a, b); }
 
     /** Compute the square of a. */
-    inline constexpr Field Sqr() const { return Field(SQR->template Map<O>(m_val)); }
+    inline constexpr Elem Sqr(Elem a) const { return SQR->template Map<O>(a); }
 
     /** Compute x such that x^2 + x = a (undefined result if no solution exists). */
-    inline constexpr Field Qrt() const { return Field(QRT->template Map<O>(m_val)); }
+    inline constexpr Elem Qrt(Elem a) const { return QRT->template Map<O>(a); }
 
     /** Compute the inverse of x1. */
-    Field Inv() const { return Field(InvExtGCD<I, O, B, MOD>(m_val)); }
+    Elem Inv(Elem a) const { return InvExtGCD<I, O, B, MOD>(a); }
 
     /** Generate a random field element. */
-    static Field FromSeed(uint64_t seed) {
+    Elem FromSeed(uint64_t seed) const {
         uint64_t k0 = 0x496e744669656c64ull; // "IntField"
         uint64_t k1 = seed;
-        uint64_t count = ((uint64_t)BITS) << 32;
-        I ret;
+        uint64_t count = ((uint64_t)B) << 32;
+        Elem ret;
         do {
             ret = O::Mask(I(SipHash(k0, k1, count++)));
         } while(ret == 0);
-        return Field(ret);
+        return ret;
     }
 
-    static Field Deserialize(BitReader& in) { return Field(in.template Read<BITS, I>()); }
+    Elem Deserialize(BitReader& in) const { return in.template Read<B, I>(); }
 
-    void Serialize(BitWriter& out) const { out.template Write<BITS, I>(m_val); }
+    void Serialize(BitWriter& out, Elem val) const { out.template Write<B, I>(val); }
 
-    static constexpr Field FromUint64(uint64_t x) { return Field(O::Mask(I(x))); }
-    constexpr uint64_t ToUint64() const { return uint64_t(m_val); }
+    constexpr Elem FromUint64(uint64_t x) const { return O::Mask(I(x)); }
+    constexpr uint64_t ToUint64(Elem val) const { return uint64_t(val); }
 };
 
 }
