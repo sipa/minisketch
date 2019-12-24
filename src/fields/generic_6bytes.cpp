@@ -77,14 +77,14 @@ typedef Field<uint64_t, 48, 45, StatTable48, DynTable48, &SQR_TABLE_48, &QRT_TAB
 Sketch* ConstructGeneric6Bytes(int bits, int implementation)
 {
     switch (bits) {
-    case 41: return new SketchImpl<Field41>(implementation);
-    case 42: return new SketchImpl<Field42>(implementation);
-    case 43: return new SketchImpl<Field43>(implementation);
-    case 44: return new SketchImpl<Field44>(implementation);
-    case 45: return new SketchImpl<Field45>(implementation);
-    case 46: return new SketchImpl<Field46>(implementation);
-    case 47: return new SketchImpl<Field47>(implementation);
-    case 48: return new SketchImpl<Field48>(implementation);
+    case 41: return new SketchImpl<Field41>(implementation, 41);
+    case 42: return new SketchImpl<Field42>(implementation, 42);
+    case 43: return new SketchImpl<Field43>(implementation, 43);
+    case 44: return new SketchImpl<Field44>(implementation, 44);
+    case 45: return new SketchImpl<Field45>(implementation, 45);
+    case 46: return new SketchImpl<Field46>(implementation, 46);
+    case 47: return new SketchImpl<Field47>(implementation, 47);
+    case 48: return new SketchImpl<Field48>(implementation, 48);
     default: return nullptr;
     }
 }

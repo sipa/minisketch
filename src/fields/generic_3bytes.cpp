@@ -77,14 +77,14 @@ typedef Field<uint32_t, 24, 27, StatTable24, DynTable24, &SQR_TABLE_24, &QRT_TAB
 Sketch* ConstructGeneric3Bytes(int bits, int implementation)
 {
     switch (bits) {
-    case 17: return new SketchImpl<Field17>(implementation);
-    case 18: return new SketchImpl<Field18>(implementation);
-    case 19: return new SketchImpl<Field19>(implementation);
-    case 20: return new SketchImpl<Field20>(implementation);
-    case 21: return new SketchImpl<Field21>(implementation);
-    case 22: return new SketchImpl<Field22>(implementation);
-    case 23: return new SketchImpl<Field23>(implementation);
-    case 24: return new SketchImpl<Field24>(implementation);
+    case 17: return new SketchImpl<Field17>(implementation, 17);
+    case 18: return new SketchImpl<Field18>(implementation, 18);
+    case 19: return new SketchImpl<Field19>(implementation, 19);
+    case 20: return new SketchImpl<Field20>(implementation, 20);
+    case 21: return new SketchImpl<Field21>(implementation, 21);
+    case 22: return new SketchImpl<Field22>(implementation, 22);
+    case 23: return new SketchImpl<Field23>(implementation, 23);
+    case 24: return new SketchImpl<Field24>(implementation, 24);
     default: return nullptr;
     }
 }

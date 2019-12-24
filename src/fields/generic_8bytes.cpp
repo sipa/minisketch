@@ -77,14 +77,14 @@ typedef Field<uint64_t, 64, 27, StatTable64, DynTable64, &SQR_TABLE_64, &QRT_TAB
 Sketch* ConstructGeneric8Bytes(int bits, int implementation)
 {
     switch (bits) {
-    case 57: return new SketchImpl<Field57>(implementation);
-    case 58: return new SketchImpl<Field58>(implementation);
-    case 59: return new SketchImpl<Field59>(implementation);
-    case 60: return new SketchImpl<Field60>(implementation);
-    case 61: return new SketchImpl<Field61>(implementation);
-    case 62: return new SketchImpl<Field62>(implementation);
-    case 63: return new SketchImpl<Field63>(implementation);
-    case 64: return new SketchImpl<Field64>(implementation);
+    case 57: return new SketchImpl<Field57>(implementation, 57);
+    case 58: return new SketchImpl<Field58>(implementation, 58);
+    case 59: return new SketchImpl<Field59>(implementation, 59);
+    case 60: return new SketchImpl<Field60>(implementation, 60);
+    case 61: return new SketchImpl<Field61>(implementation, 61);
+    case 62: return new SketchImpl<Field62>(implementation, 62);
+    case 63: return new SketchImpl<Field63>(implementation, 63);
+    case 64: return new SketchImpl<Field64>(implementation, 64);
     default: return nullptr;
     }
 }

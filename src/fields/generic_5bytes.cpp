@@ -15,7 +15,6 @@
 #include "../sketch.h"
 
 namespace {
-
 // 33 bit field
 typedef RecLinTrans<uint64_t, 6, 6, 6, 5, 5, 5> StatTable33;
 typedef RecLinTrans<uint64_t, 4, 4, 4, 4, 4, 4, 3, 3, 3> DynTable33;
@@ -77,14 +76,14 @@ typedef Field<uint64_t, 40, 57, StatTable40, DynTable40, &SQR_TABLE_40, &QRT_TAB
 Sketch* ConstructGeneric5Bytes(int bits, int implementation)
 {
     switch (bits) {
-    case 33: return new SketchImpl<Field33>(implementation);
-    case 34: return new SketchImpl<Field34>(implementation);
-    case 35: return new SketchImpl<Field35>(implementation);
-    case 36: return new SketchImpl<Field36>(implementation);
-    case 37: return new SketchImpl<Field37>(implementation);
-    case 38: return new SketchImpl<Field38>(implementation);
-    case 39: return new SketchImpl<Field39>(implementation);
-    case 40: return new SketchImpl<Field40>(implementation);
+    case 33: return new SketchImpl<Field33>(implementation, 33);
+    case 34: return new SketchImpl<Field34>(implementation, 34);
+    case 35: return new SketchImpl<Field35>(implementation, 35);
+    case 36: return new SketchImpl<Field36>(implementation, 36);
+    case 37: return new SketchImpl<Field37>(implementation, 37);
+    case 38: return new SketchImpl<Field38>(implementation, 38);
+    case 39: return new SketchImpl<Field39>(implementation, 39);
+    case 40: return new SketchImpl<Field40>(implementation, 40);
     default: return nullptr;
     }
 }
