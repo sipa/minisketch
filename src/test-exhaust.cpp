@@ -156,7 +156,52 @@ void TestRand(int bits, int impl, int count, int iter) {
     }
 }
 
+void TestComputeFunctions() {
+    for (uint32_t bits = 0; bits <= 256; ++bits) {
+        for (uint32_t fpbits = 0; fpbits <= 512; ++fpbits) {
+            std::vector<size_t> table_max_elements(1025);
+            for (size_t capacity = 0; capacity <= 1024; ++capacity) {
+                table_max_elements[capacity] = minisketch_compute_max_elements(bits, capacity, fpbits);
+                // Exception for bits==0
+                if (bits == 0) CHECK(table_max_elements[capacity] == 0);
+                // A sketch with capacity N cannot guarantee decoding more than N elements.
+                CHECK(table_max_elements[capacity] <= capacity);
+                // When asking for N bits of false positive protection, either no solution exists, or no more than ceil(N / bits) excess capacity should be needed.
+                if (bits > 0) CHECK(table_max_elements[capacity] == 0 || capacity - table_max_elements[capacity] <= (fpbits + bits - 1) / bits);
+                // Increasing capacity by one, if there is a solution, should always increment the max_elements by at least one as well.
+                if (capacity > 0) CHECK(table_max_elements[capacity] == 0 || table_max_elements[capacity] > table_max_elements[capacity - 1]);
+            }
+
+            std::vector<size_t> table_capacity(513);
+            for (size_t max_elements = 0; max_elements <= 512; ++max_elements) {
+                table_capacity[max_elements] = minisketch_compute_capacity(bits, max_elements, fpbits);
+                // Exception for bits==0
+                if (bits == 0) CHECK(table_capacity[max_elements] == 0);
+                // To be able to decode N elements, capacity needs to be at least N.
+                if (bits > 0) CHECK(table_capacity[max_elements] >= max_elements);
+                // A sketch of N bits in total cannot have more than N bits of false positive protection;
+                if (bits > 0) CHECK(bits * table_capacity[max_elements] >= fpbits);
+                // When asking for N bits of false positive protection, no more than ceil(N / bits) excess capacity should be needed.
+                if (bits > 0) CHECK(table_capacity[max_elements] - max_elements <= (fpbits + bits - 1) / bits);
+                // Increasing max_elements by one can only increment the capacity by 0 or 1.
+                if (max_elements > 0 && fpbits < 256) CHECK(table_capacity[max_elements] == table_capacity[max_elements - 1] || table_capacity[max_elements] == table_capacity[max_elements - 1] + 1);
+                // Check round-tripping max_elements->capacity->max_elements (only a lower bound)
+                CHECK(table_capacity[max_elements] <= 1024);
+                CHECK(table_max_elements[table_capacity[max_elements]] == 0 || table_max_elements[table_capacity[max_elements]] >= max_elements);
+            }
+
+            for (size_t capacity = 0; capacity <= 512; ++capacity) {
+                // Check round-tripping capacity->max_elements->capacity (exact, if it exists)
+                CHECK(table_max_elements[capacity] <= 512);
+                CHECK(table_max_elements[capacity] == 0 || table_capacity[table_max_elements[capacity]] == capacity);
+            }
+        }
+    }
+}
+
 int main(void) {
+    TestComputeFunctions();
+
     for (int j = 2; j <= 64; j += 1) {
         fprintf(stderr, "%i random tests with %i bits:\n", 500 / j, j);
         TestRand(j, 0, 150, 500 / j);

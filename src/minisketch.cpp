@@ -7,6 +7,8 @@
 #include <new>
 
 #include "../include/minisketch.h"
+
+#include "false_positives.h"
 #include "sketch.h"
 
 #ifdef HAVE_CLMUL
@@ -234,6 +236,14 @@ void minisketch_set_seed(minisketch* sketch, uint64_t seed) {
     Sketch* s = (Sketch*)sketch;
     s->Check();
     s->SetSeed(seed);
+}
+
+size_t minisketch_compute_capacity(uint32_t bits, size_t max_elements, uint32_t fpbits) {
+    return ComputeCapacity(bits, max_elements, fpbits);
+}
+
+size_t minisketch_compute_max_elements(uint32_t bits, size_t capacity, uint32_t fpbits) {
+    return ComputeMaxElements(bits, capacity, fpbits);
 }
 
 }

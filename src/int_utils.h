@@ -122,6 +122,25 @@ public:
 template<int BITS, typename I>
 constexpr inline I Mask() { return ((I((I(-1)) << (std::numeric_limits<I>::digits - BITS))) >> (std::numeric_limits<I>::digits - BITS)); }
 
+/** Compute the smallest power of two that is larger than val. */
+template<typename I>
+static inline int CountBits(I val, int max) {
+#ifdef HAVE_CLZ
+    (void)max;
+    if (val == 0) return 0;
+    if (std::numeric_limits<unsigned>::digits >= std::numeric_limits<I>::digits) {
+        return std::numeric_limits<unsigned>::digits - __builtin_clz(val);
+    } else if (std::numeric_limits<unsigned long>::digits >= std::numeric_limits<I>::digits) {
+        return std::numeric_limits<unsigned long>::digits - __builtin_clzl(val);
+    } else {
+        return std::numeric_limits<unsigned long long>::digits - __builtin_clzll(val);
+    }
+#else
+    while (max && (val >> (max - 1) == 0)) --max;
+    return max;
+#endif
+}
+
 template<typename I, int BITS>
 class BitsInt {
 private:
@@ -168,22 +187,7 @@ public:
         return val ^ (-I(cond) & MOD);
     }
 
-    static inline int Bits(I val, int max) {
-#ifdef HAVE_CLZ
-        (void)max;
-        if (val == 0) return 0;
-        if (std::numeric_limits<unsigned>::digits >= std::numeric_limits<I>::digits) {
-            return std::numeric_limits<unsigned>::digits - __builtin_clz(val);
-        } else if (std::numeric_limits<unsigned long>::digits >= std::numeric_limits<I>::digits) {
-            return std::numeric_limits<unsigned long>::digits - __builtin_clzl(val);
-        } else {
-            return std::numeric_limits<unsigned long long>::digits - __builtin_clzll(val);
-        }
-#else
-        while (max && (val >> (max - 1) == 0)) --max;
-        return max;
-#endif
-    }
+    static inline int Bits(I val, int max) { return CountBits<I>(val, max); }
 };
 
 /** Class which implements a stateless LFSR for generic moduli. */

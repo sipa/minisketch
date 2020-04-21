@@ -7,6 +7,10 @@
 #ifndef _MINISKETCH_UTIL_H_
 #define _MINISKETCH_UTIL_H_
 
+#ifdef MINISKETCH_VERIFY
+#include <stdio.h>
+#endif
+
 #if !defined(__GNUC_PREREQ)
 # if defined(__GNUC__)&&defined(__GNUC_MINOR__)
 #  define __GNUC_PREREQ(_maj,_min) \
