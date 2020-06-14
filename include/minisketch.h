@@ -117,6 +117,38 @@ size_t minisketch_merge(minisketch* sketch, const minisketch* other_sketch);
  */
 ssize_t minisketch_decode(const minisketch* sketch, size_t max_elements, uint64_t* output);
 
+/** Compute the capacity needed to achieve a certain rate of false positives.
+ *
+ * A sketch with capacity c and no more than c elements can always be decoded
+ * correctly. However, if it has more than c elements, or contains just random
+ * bytes, it is possible that it will still decode, but the result will be
+ * nonsense. This can be counteracted by increasing the capacity slightly.
+ *
+ * Given a field size bits, an intended number of elements that can be decoded
+ * max_elements, and a false positive probability of 1 in 2**fpbits, this
+ * function computes the necessary capacity. It is only guaranteed to be
+ * accurate up to fpbits=256.
+ */
+size_t minisketch_compute_capacity(uint32_t bits, size_t max_elements, uint32_t fpbits);
+
+/** Compute what max_elements can be decoded for a certain rate of false positives.
+ *
+ * This is the inverse operation of minisketch_compute_capacity. It determines,
+ * given a field size bits, a capacity of a sketch, and an acceptable false
+ * positive probability of 1 in 2**fpbits, what the maximum allowed
+ * max_elements value is. If no value of max_elements would give the desired
+ * false positive probability, 0 is returned.
+ *
+ * Note that this is not an exact inverse of minisketch_compute_capacity. For
+ * example, with bits=32, fpbits=16, and max_elements=8,
+ * minisketch_compute_capacity will return 9, as capacity 8 would only have a
+ * false positive chance of 1 in 2^15.3. Increasing the capacity to 9 however
+ * decreases the fp chance to 1 in 2^47.3, enough for max_elements=9 (with fp
+ * chance of 1 in 2^18.5). Therefore, minisketch_compute_max_elements with
+ * capacity=9 will return 9.
+ */
+size_t minisketch_compute_max_elements(uint32_t bits, size_t capacity, uint32_t fpbits);
+
 #ifdef __cplusplus
 }
 #endif
