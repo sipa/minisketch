@@ -31,7 +31,7 @@ Because in our field addition corresponds to XOR of integers, it holds for every
 desire from a sketch, namely that an efficient operation exists to
 combine two sketches such that the result is a sketch of the symmetric
 difference of the sets. It holds that
-*S({m<sub>1</sub>,m<sub>2</sub>}) + S({m<sub>2</sub>,m<sub>3</sub>}) = S(m<sub>1</sub>) + (S(m<sub>2</sub>) + S(m<sub>2</sub>)) + S(m<sub>3</sub>) = S(m<sub>1</sub>) + S(m<sub>3</sub>) = S({m<sub>1</sub>,m<sub>3</sub>}</sub>})*. The question is whether we can also efficiently recover the elements from their power series' coefficients.
+*S({m<sub>1</sub>,m<sub>2</sub>}) + S({m<sub>2</sub>,m<sub>3</sub>}) = S(m<sub>1</sub>) + (S(m<sub>2</sub>) + S(m<sub>2</sub>)) + S(m<sub>3</sub>) = S(m<sub>1</sub>) + S(m<sub>3</sub>) = S({m<sub>1</sub>,m<sub>3</sub>})*. The question is whether we can also efficiently recover the elements from their power series' coefficients.
 
 **An infinity of coefficients is hard**
 
