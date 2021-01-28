@@ -26,10 +26,19 @@ int minisketch_bits_supported(uint32_t bits);
 */
 uint32_t minisketch_implementation_max(void);
 
+/** Determine if the a combination of bits and implementation number is available.
+ *
+ * Returns 1 if it is, 0 otherwise.
+ */
+int minisketch_implementation_supported(uint32_t bits, uint32_t implementation);
+
 /** Construct a sketch for a given element size, implementation and capacity.
  *
  * If the combination of `bits` and `implementation` is unavailable, or if
- * `capacity` is 0, NULL is returned.
+ * `capacity` is 0, NULL is returned. If minisketch_implementation_supported
+ * returns 1 for the specified bits and implementation, this will always succeed
+ * (except when allocation fails).
+ *
  * If the result is not NULL, it must be destroyed using minisketch_destroy.
  */
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity);

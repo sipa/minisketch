@@ -25,7 +25,9 @@ uint64_t Combination(uint64_t n, uint64_t k) {
 }
 
 void TestAll(int bits, int impl, int count, uint32_t threadid, uint32_t threads, std::vector<uint64_t>& ret) {
+    bool supported = minisketch_implementation_supported(bits, impl);
     minisketch* state = minisketch_create(bits, impl, count);
+    CHECK(supported == (state != nullptr));
     if (!state) return;
 
     // Iterate over all (bits)-bit sketches with (count) syndromes.
