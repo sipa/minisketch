@@ -74,8 +74,8 @@ The following may work and produce a `libminisketch.a` file you can link against
 
 ```bash
 git clone https://github.com/sipa/minisketch
-cd minisketch/src
-make
+cd minisketch
+./autogen.sh && ./configure && make
 ```
 
 ## Usage
