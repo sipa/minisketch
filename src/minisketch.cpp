@@ -133,6 +133,20 @@ uint32_t minisketch_implementation_max() {
     return ret;
 }
 
+int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) {
+    if (!minisketch_bits_supported(bits) || implementation > minisketch_implementation_max()) {
+        return 0;
+    }
+    try {
+        Sketch* sketch = Construct(bits, implementation);
+        if (sketch) {
+            delete sketch;
+            return 1;
+        }
+    } catch (std::bad_alloc& ba) {}
+    return 0;
+}
+
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity) {
     if (capacity == 0) {
         return nullptr;
