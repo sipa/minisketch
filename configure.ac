@@ -37,7 +37,17 @@ AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])
 enable_clmul=
-AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]],[AC_LANG_PROGRAM([
+  #include <stdint.h>
+  #include <x86intrin.h>
+], [
+  __m128i a = _mm_cvtsi64_si128((uint64_t)7);
+  __m128i b = _mm_clmulepi64_si128(a, a, 37);
+  __m128i c = _mm_srli_epi64(b, 41);
+  __m128i d = _mm_xor_si128(b, c);
+  uint64_t e = _mm_cvtsi128_si64(d);
+  return e == 0;
+])])
 if test x$enable_clmul = xyes; then
   CLMUL_CXXFLAGS="-mpclmul"
   AC_DEFINE(HAVE_CLMUL, 1, [Define this symbol if clmul instructions can be used])
