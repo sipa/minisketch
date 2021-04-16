@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <limits>
 #include <random>
 #include <stdio.h>
 #include "util.h"
@@ -116,52 +117,103 @@ void TestExhaustive(uint32_t bits, size_t capacity) {
     }
 }
 
-void TestRand(int bits, int impl, int capacity, int iter) {
-    std::vector<uint64_t> elems(capacity);
-    std::vector<uint64_t> roots(capacity + 1);
+/** Test properties of sketches with random elements put in. */
+void TestRandomized(uint32_t bits, size_t max_capacity, size_t iter) {
     std::random_device rnd;
-    std::uniform_int_distribution<uint64_t> dist(1, bits == 64 ? -1 : ((uint64_t(1) << bits) - 1));
+    std::uniform_int_distribution<uint64_t> capacity_dist(1, std::min<uint64_t>(std::numeric_limits<uint64_t>::max() >> (64 - bits), max_capacity));
+    std::uniform_int_distribution<uint64_t> element_dist(1, std::numeric_limits<uint64_t>::max() >> (64 - bits));
+    std::uniform_int_distribution<uint64_t> rand64(0, std::numeric_limits<uint64_t>::max());
+    std::uniform_int_distribution<int64_t> size_offset_dist(-3, 3);
 
-    for (int i = 0; i < iter; ++i) {
-        bool overfill = iter & 1; // Test some cases with overfull sketches that may not decode.
-        minisketch* state = minisketch_create(bits, impl, capacity);
-        if (!state) return;
-        minisketch* basestate = minisketch_create(bits, 0, capacity);
-        for (int j = 0; j < capacity + 3*overfill; ++j) {
-            uint64_t r = dist(rnd);
-            if (!overfill) elems[j] = r;
-            minisketch_add_uint64(state, r);
-            minisketch_add_uint64(basestate, r);
+    std::vector<uint64_t> decode_0;
+    std::vector<uint64_t> decode_other;
+    std::vector<uint64_t> decode_temp;
+    std::vector<uint64_t> elements;
+
+    for (size_t i = 0; i < iter; ++i) {
+        // Determine capacity, and construct Minisketch objects for all implementations.
+        uint64_t capacity = capacity_dist(rnd);
+        auto sketches = CreateSketches(bits, capacity);
+        // Sanity checks
+        CHECK(!sketches.empty());
+        for (size_t impl = 0; impl < sketches.size(); ++impl) {
+            CHECK(sketches[impl].GetBits() == bits);
+            CHECK(sketches[impl].GetCapacity() == capacity);
+            CHECK(sketches[impl].GetSerializedSize() == sketches[0].GetSerializedSize());
         }
-        roots.assign(capacity + 1, 0);
-        std::vector<unsigned char> data, basedata;
-        basedata.resize(((capacity + 1) * bits + 7) / 8);
-        data.resize(((capacity + 1) * bits + 7) / 8);
-        minisketch_serialize(basestate, basedata.data());
-        minisketch_serialize(state, data.data());
-        CHECK(data == basedata);
-        minisketch_deserialize(state, basedata.data());
-        int num_roots = minisketch_decode(state, capacity + 1, roots.data());
-        CHECK(overfill || num_roots >= 0);
-        CHECK(num_roots < 1 || minisketch_decode(state, num_roots - 1, roots.data()) == -1); // Decoding with a too-low maximum should fail.
-        if (!overfill) {
-            std::sort(roots.begin(), roots.begin() + num_roots);
-            std::sort(elems.begin(), elems.end());
-            int expected = elems.size();
-            for (size_t pos = 0; pos < elems.size(); ++pos) {
-                if (pos + 1 < elems.size() && elems[pos] == elems[pos + 1]) {
-                    expected -= 2;
-                    elems[pos] = 0;
-                    elems[pos + 1] = 0;
-                    ++pos;
+        // Determine the number of elements, and create a vector to store them in.
+        size_t element_count = std::max<int64_t>(0, std::max<int64_t>(0, capacity + size_offset_dist(rnd)));
+        elements.resize(element_count);
+        // Add the elements to all sketches
+        for (size_t j = 0; j < element_count; ++j) {
+            uint64_t elem = element_dist(rnd);
+            CHECK(elem != 0);
+            elements[j] = elem;
+            for (auto& sketch : sketches) sketch.Add(elem);
+        }
+        // Remove pairs of duplicates in elements, as they cancel out.
+        std::sort(elements.begin(), elements.end());
+        size_t real_element_count = element_count;
+        for (size_t pos = 0; pos + 1 < elements.size(); ++pos) {
+            if (elements[pos] == elements[pos + 1]) {
+                real_element_count -= 2;
+                // Set both elements to 0; afterwards we will move these to the end.
+                elements[pos] = 0;
+                elements[pos + 1] = 0;
+                ++pos;
+            }
+        }
+        if (real_element_count < element_count) {
+            // Move all introduced zeroes (masking duplicates) to the end.
+            std::sort(elements.begin(), elements.end(), [](uint64_t a, uint64_t b) { return a != b && (b == 0 || (a != 0 && a < b)); });
+            CHECK(elements[real_element_count] == 0);
+            elements.resize(real_element_count);
+        }
+        // Create and compare serializations
+        auto serialized_0 = sketches[0].Serialize();
+        for (size_t impl = 1; impl < sketches.size(); ++impl) {
+            auto serialized_other = sketches[impl].Serialize();
+            CHECK(serialized_other == serialized_0);
+        }
+        // Deserialize and reserialize them
+        for (size_t impl = 0; impl < sketches.size(); ++impl) {
+            sketches[impl].Deserialize(serialized_0);
+            auto reserialized = sketches[impl].Serialize();
+            CHECK(reserialized == serialized_0);
+        }
+        // Decode with limit set to the capacity, and compare results
+        decode_0.resize(capacity);
+        bool decodable_0 = sketches[0].Decode(decode_0);
+        std::sort(decode_0.begin(), decode_0.end());
+        for (size_t impl = 1; impl < sketches.size(); ++impl) {
+            decode_other.resize(capacity);
+            bool decodable_other = sketches[impl].Decode(decode_other);
+            CHECK(decodable_other == decodable_0);
+            std::sort(decode_other.begin(), decode_other.end());
+            CHECK(decode_other == decode_0);
+        }
+        // If the result is decodable, it should also be decodable with limit
+        // set to the actual number of elements, and not with one less.
+        if (decodable_0) {
+            for (auto& sketch : sketches) {
+                decode_temp.resize(decode_0.size());
+                bool decodable = sketch.Decode(decode_temp);
+                CHECK(decodable);
+                std::sort(decode_temp.begin(), decode_temp.end());
+                CHECK(decode_temp == decode_0);
+                if (!decode_0.empty()) {
+                    decode_temp.resize(decode_0.size() - 1);
+                    decodable = sketch.Decode(decode_temp);
+                    CHECK(!decodable);
                 }
             }
-            CHECK(num_roots == expected);
-            std::sort(elems.begin(), elems.end());
-            CHECK(std::equal(roots.begin(), roots.begin() + num_roots, elems.end() - expected));
         }
-        minisketch_destroy(state);
-        minisketch_destroy(basestate);
+        // If the actual number of elements is not higher than the capacity, the
+        // result should be decodable, and the result should match what we put in.
+        if (real_element_count <= capacity) {
+            CHECK(decodable_0);
+            CHECK(decode_0 == elements);
+        }
     }
 }
 
@@ -218,7 +270,7 @@ int main(int argc, char** argv) {
         try {
             test_complexity = 0;
             long long complexity = std::stoll(arg, &len);
-            if (complexity >= 1 && len == arg.size() && ((uint64_t)complexity <= std::numeric_limits<uint64_t>::max() >> 7)) {
+            if (complexity >= 1 && len == arg.size() && ((uint64_t)complexity <= std::numeric_limits<uint64_t>::max() >> 10)) {
                 test_complexity = complexity;
             }
         } catch (const std::logic_error&) {}
@@ -237,10 +289,10 @@ int main(int argc, char** argv) {
 
     TestComputeFunctions();
 
-    for (unsigned j = 2; j <= 64; j += 1) {
-        TestRand(j, 0, 150, (test_complexity << 7) / j);
-        TestRand(j, 1, 150, (test_complexity << 7) / j);
-        TestRand(j, 2, 150, (test_complexity << 7) / j);
+    for (unsigned j = 2; j <= 64; ++j) {
+        TestRandomized(j, 8, (test_complexity << 10) / j);
+        TestRandomized(j, 128, (test_complexity << 7) / j);
+        TestRandomized(j, 4096, test_complexity / j);
     }
 
     for (int weight = 2; weight <= 40; ++weight) {
