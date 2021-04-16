@@ -5,13 +5,12 @@
  **********************************************************************/
 
 #include "../include/minisketch.h"
-#include <string.h>
-#include <memory>
 #include <vector>
 #include <algorithm>
 #include <random>
-#include <iostream>
 #include "util.h"
+
+namespace {
 
 uint64_t Combination(uint64_t n, uint64_t k) {
     if (n - k < k) k = n - k;
@@ -62,7 +61,7 @@ std::vector<uint64_t> TestAll(int bits, int impl, int capacity) {
             unsigned char nser[8] = {0};
             minisketch_serialize(state2, nser);
             // Compare it to the original.
-            CHECK(memcmp(ser, nser, 8) == 0);
+            CHECK(std::equal(ser, ser + 8, nser));
             // Count it.
             if (num_roots +1 >= (int)ret.size()) ret.resize(num_roots + 2);
             ret[num_roots + 1]++;
@@ -171,6 +170,8 @@ void TestComputeFunctions() {
         }
     }
 }
+
+} // namespace
 
 int main(void) {
     TestComputeFunctions();
