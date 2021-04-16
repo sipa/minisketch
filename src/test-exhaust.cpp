@@ -74,7 +74,7 @@ std::vector<uint64_t> TestAll(int bits, int impl, int capacity) {
     }
     minisketch_destroy(state);
 
-    for (int i = 1; i <= capacity + 1; ++i) {
+    for (int i = 1; i - 1 <= capacity && (i - 1) >> bits; ++i) {
         CHECK(ret[i] == Combination((uint64_t(1) << bits) - 1, i - 1));
     }
     return ret;
@@ -193,34 +193,26 @@ int main(void) {
         fprintf(stderr, "%i random tests with %i bits: done\n", 500 / j, j);
     }
 
-    int capacities[65] = {0};
-    // Initialize capacities to 1 because a 0 capacity is not allowed.
-    for (int bits = 0; bits < 65; ++bits) {
-        capacities[bits] = 1;
-    }
-    for (int weight = 0; weight <= 40; weight += 1) {
-        for (int bits = 2; bits <= 32; ++bits) {
-            int capacity = capacities[bits];
-            while (capacity < (1 << bits) && capacity * bits <= weight) {
-                auto ret = TestAll(bits, 0, capacity);
-                auto ret2 = TestAll(bits, 1, capacity);
-                auto ret3 = TestAll(bits, 2, capacity);
-                CHECK(ret2.empty() || ret == ret2);
-                CHECK(ret3.empty() || ret == ret3);
-                fprintf(stderr, "bits=%i capacity=%i below_bound=[", bits, capacity);
-                for (int i = 0; i <= capacity; ++i) {
-                    if (i) fprintf(stderr,  ",");
-                    fprintf(stderr, "%llu", (unsigned long long)ret[i + 1]);
-                }
-                fprintf(stderr, "] above_bound=[");
-                for (int i = capacity + 1; i + 1 < (int)ret.size(); ++i) {
-                    if (i > capacity + 1) fprintf(stderr,  ",");
-                    fprintf(stderr, "%llu/%llu", (unsigned long long)ret[i + 1], (unsigned long long)Combination((uint64_t(1) << bits) - 1, i));
-                }
-                fprintf(stderr, "] nodecode=[%g]\n", (double)ret[0] * pow(0.5, bits * capacity));
-                ++capacity;
+    for (int weight = 2; weight <= 40; weight += 1) {
+        for (int bits = 2; bits <= 32 && bits <= weight; ++bits) {
+            int capacity = weight / bits;
+            if (capacity * bits != weight) continue;
+            auto ret = TestAll(bits, 0, capacity);
+            auto ret2 = TestAll(bits, 1, capacity);
+            auto ret3 = TestAll(bits, 2, capacity);
+            CHECK(ret2.empty() || ret == ret2);
+            CHECK(ret3.empty() || ret == ret3);
+            fprintf(stderr, "bits=%i capacity=%i below_bound=[", bits, capacity);
+            for (int i = 0; i <= capacity; ++i) {
+                if (i) fprintf(stderr,  ",");
+                fprintf(stderr, "%llu", (unsigned long long)ret[i + 1]);
             }
-            capacities[bits] = capacity;
+            fprintf(stderr, "] above_bound=[");
+            for (int i = capacity + 1; i + 1 < (int)ret.size(); ++i) {
+                if (i > capacity + 1) fprintf(stderr,  ",");
+                fprintf(stderr, "%llu/%llu", (unsigned long long)ret[i + 1], (unsigned long long)Combination((uint64_t(1) << bits) - 1, i));
+            }
+            fprintf(stderr, "] nodecode=[%g]\n", (double)ret[0] * pow(0.5, bits * capacity));
         }
     }
 
