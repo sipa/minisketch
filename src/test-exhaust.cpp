@@ -110,11 +110,6 @@ void TestRand(int bits, int impl, int capacity, int iter) {
         CHECK(num_roots < 1 || minisketch_decode(state, num_roots - 1, roots.data()) == -1); // Decoding with a too-low maximum should fail.
         if (!overfill) {
             std::sort(roots.begin(), roots.begin() + num_roots);
-//            fprintf(stderr, "Solut: ");
-//            for (int j = 0; j < num_roots; ++j) {
-//                fprintf(stderr, "%016llx ", (unsigned long long)roots[j]);
-//            }
-//            fprintf(stderr, "\n");
             std::sort(elems.begin(), elems.end());
             int expected = elems.size();
             for (size_t pos = 0; pos < elems.size(); ++pos) {
@@ -127,11 +122,6 @@ void TestRand(int bits, int impl, int capacity, int iter) {
             }
             CHECK(num_roots == expected);
             std::sort(elems.begin(), elems.end());
-//            fprintf(stderr, "Elems: ");
-//            for (int j = 0; j < expected; ++j) {
-//                fprintf(stderr, "%016llx ", (unsigned long long)elems[j + elems.size() - expected]);
-//            }
-//            fprintf(stderr, "\n");
             CHECK(std::equal(roots.begin(), roots.begin() + num_roots, elems.end() - expected));
         }
         minisketch_destroy(state);
@@ -186,11 +176,9 @@ int main(void) {
     TestComputeFunctions();
 
     for (int j = 2; j <= 64; j += 1) {
-        fprintf(stderr, "%i random tests with %i bits:\n", 500 / j, j);
         TestRand(j, 0, 150, 500 / j);
         TestRand(j, 1, 150, 500 / j);
         TestRand(j, 2, 150, 500 / j);
-        fprintf(stderr, "%i random tests with %i bits: done\n", 500 / j, j);
     }
 
     for (int weight = 2; weight <= 40; weight += 1) {
@@ -202,17 +190,6 @@ int main(void) {
             auto ret3 = TestAll(bits, 2, capacity);
             CHECK(ret2.empty() || ret == ret2);
             CHECK(ret3.empty() || ret == ret3);
-            fprintf(stderr, "bits=%i capacity=%i below_bound=[", bits, capacity);
-            for (int i = 0; i <= capacity; ++i) {
-                if (i) fprintf(stderr,  ",");
-                fprintf(stderr, "%llu", (unsigned long long)ret[i + 1]);
-            }
-            fprintf(stderr, "] above_bound=[");
-            for (int i = capacity + 1; i + 1 < (int)ret.size(); ++i) {
-                if (i > capacity + 1) fprintf(stderr,  ",");
-                fprintf(stderr, "%llu/%llu", (unsigned long long)ret[i + 1], (unsigned long long)Combination((uint64_t(1) << bits) - 1, i));
-            }
-            fprintf(stderr, "] nodecode=[%g]\n", (double)ret[0] * pow(0.5, bits * capacity));
         }
     }
 
