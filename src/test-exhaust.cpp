@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <random>
 #include <iostream>
-#include <thread>
 #include "util.h"
 
 uint64_t Combination(uint64_t n, uint64_t k) {
@@ -24,14 +23,15 @@ uint64_t Combination(uint64_t n, uint64_t k) {
     return ret;
 }
 
-void TestAll(int bits, int impl, int count, uint32_t threadid, uint32_t threads, std::vector<uint64_t>& ret) {
+std::vector<uint64_t> TestAll(int bits, int impl, int count) {
     bool supported = minisketch_implementation_supported(bits, impl);
     minisketch* state = minisketch_create(bits, impl, count);
     CHECK(supported == (state != nullptr));
-    if (!state) return;
+    std::vector<uint64_t> ret;
+    if (!state) return ret;
 
     // Iterate over all (bits)-bit sketches with (count) syndromes.
-    for (uint64_t x = threadid; (x >> (bits * count)) == 0; x += threads) {
+    for (uint64_t x = 0; (x >> (bits * count)) == 0; ++x) {
         // Construct the serialization and load it.
         unsigned char ser[8];
         ser[0] = x;
@@ -73,28 +73,9 @@ void TestAll(int bits, int impl, int count, uint32_t threadid, uint32_t threads,
         }
     }
     minisketch_destroy(state);
-}
 
-std::vector<uint64_t> TestAll(int bits, int impl, int count, uint32_t threads) {
-    std::vector<std::vector<uint64_t>> outputs;
-    std::vector<std::thread> thread_list;
-    thread_list.reserve(threads);
-    outputs.resize(threads);
-    for (uint32_t i = 0; i < threads; ++i) {
-        thread_list.emplace_back([=,&outputs](){ TestAll(bits, impl, count, i, threads, outputs[i]); });
-    }
-    std::vector<uint64_t> ret;
-    for (uint32_t i = 0; i < threads; ++i) {
-        thread_list[i].join();
-        if (ret.size() < outputs[i].size()) ret.resize(outputs[i].size());
-        for (size_t j = 0; j < outputs[i].size(); ++j) {
-            ret[j] += outputs[i][j];
-        }
-    }
-    if (ret.size()) {
-        for (int i = 1; i <= count + 1; ++i) {
-            CHECK(ret[i] == Combination((uint64_t(1) << bits) - 1, i - 1));
-        }
+    for (int i = 1; i <= count + 1; ++i) {
+        CHECK(ret[i] == Combination((uint64_t(1) << bits) - 1, i - 1));
     }
     return ret;
 }
@@ -221,9 +202,9 @@ int main(void) {
         for (int bits = 2; bits <= 32; ++bits) {
             int count = counts[bits];
             while (count < (1 << bits) && count * bits <= weight) {
-                auto ret = TestAll(bits, 0, count, 4);
-                auto ret2 = TestAll(bits, 1, count, 4);
-                auto ret3 = TestAll(bits, 2, count, 4);
+                auto ret = TestAll(bits, 0, count);
+                auto ret2 = TestAll(bits, 1, count);
+                auto ret3 = TestAll(bits, 2, count);
                 CHECK(ret2.empty() || ret == ret2);
                 CHECK(ret3.empty() || ret == ret3);
                 fprintf(stderr, "bits=%i count=%i below_bound=[", bits, count);

@@ -30,9 +30,6 @@ AC_ARG_ENABLE(benchmark,
     [use_benchmark=$enableval],
     [use_benchmark=no])
 
-dnl Check for pthread compile/link requirements
-AX_PTHREAD
-
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])

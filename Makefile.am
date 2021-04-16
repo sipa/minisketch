@@ -69,15 +69,15 @@ bench_LDFLAGS = $(AM_LDFLAGS) -static
 
 test_exhaust_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
 test_exhaust_CPPFLAGS = $(AM_CPPFLAGS) $(RELEASE_DEFINES)
-test_exhaust_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
+test_exhaust_CXXFLAGS = $(AM_CXXFLAGS)
 test_exhaust_LDADD = $(LIBMINISKETCH)
-test_exhaust_LDFLAGS = $(AM_LDFLAGS) $(PTHREAD_CFLAGS) -static
+test_exhaust_LDFLAGS = $(AM_LDFLAGS) -static
 
 test_exhaust_verify_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
 test_exhaust_verify_CPPFLAGS = $(AM_CPPFLAGS) $(VERIFY_DEFINES)
-test_exhaust_verify_CXXFLAGS = $(AM_CXXFLAGS) $(PTHREAD_CFLAGS)
+test_exhaust_verify_CXXFLAGS = $(AM_CXXFLAGS)
 test_exhaust_verify_LDADD = $(LIBMINISKETCH_VERIFY)
-test_exhaust_verify_LDFLAGS = $(AM_LDFLAGS) $(PTHREAD_CFLAGS) -static
+test_exhaust_verify_LDFLAGS = $(AM_LDFLAGS) -static
 
 EXTRA_DIST=
 EXTRA_DIST += LICENSE
