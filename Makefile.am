@@ -58,8 +58,8 @@ if USE_BENCHMARK
 noinst_PROGRAMS += bench
 endif
 if USE_TESTS
-noinst_PROGRAMS += test-exhaust test-exhaust-verify
-TESTS = test-exhaust test-exhaust-verify
+noinst_PROGRAMS += test test-verify
+TESTS = test test-verify
 endif
 
 bench_SOURCES = $(MINISKETCH_BENCH_SOURCES_INT)
@@ -67,17 +67,17 @@ bench_CPPFLAGS = $(AM_CPPFLAGS) $(RELEASE_DEFINES)
 bench_LDADD = $(LIBMINISKETCH)
 bench_LDFLAGS = $(AM_LDFLAGS) -static
 
-test_exhaust_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
-test_exhaust_CPPFLAGS = $(AM_CPPFLAGS) $(RELEASE_DEFINES)
-test_exhaust_CXXFLAGS = $(AM_CXXFLAGS)
-test_exhaust_LDADD = $(LIBMINISKETCH)
-test_exhaust_LDFLAGS = $(AM_LDFLAGS) -static
+test_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
+test_CPPFLAGS = $(AM_CPPFLAGS) $(RELEASE_DEFINES)
+test_CXXFLAGS = $(AM_CXXFLAGS)
+test_LDADD = $(LIBMINISKETCH)
+test_LDFLAGS = $(AM_LDFLAGS) -static
 
-test_exhaust_verify_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
-test_exhaust_verify_CPPFLAGS = $(AM_CPPFLAGS) $(VERIFY_DEFINES)
-test_exhaust_verify_CXXFLAGS = $(AM_CXXFLAGS)
-test_exhaust_verify_LDADD = $(LIBMINISKETCH_VERIFY)
-test_exhaust_verify_LDFLAGS = $(AM_LDFLAGS) -static
+test_verify_SOURCES = $(MINISKETCH_TEST_SOURCES_INT)
+test_verify_CPPFLAGS = $(AM_CPPFLAGS) $(VERIFY_DEFINES)
+test_verify_CXXFLAGS = $(AM_CXXFLAGS)
+test_verify_LDADD = $(LIBMINISKETCH_VERIFY)
+test_verify_LDFLAGS = $(AM_LDFLAGS) -static
 
 EXTRA_DIST=
 EXTRA_DIST += LICENSE
