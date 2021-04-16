@@ -7,7 +7,9 @@
 #include "../include/minisketch.h"
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 #include <random>
+#include <stdio.h>
 #include "util.h"
 
 namespace {
@@ -173,13 +175,37 @@ void TestComputeFunctions() {
 
 } // namespace
 
-int main(void) {
+int main(int argc, char** argv) {
+    uint64_t test_complexity = 4;
+    if (argc > 1) {
+        size_t len = 0;
+        std::string arg{argv[1]};
+        try {
+            test_complexity = 0;
+            long long complexity = std::stoll(arg, &len);
+            if (complexity >= 1 && len == arg.size() && ((uint64_t)complexity <= std::numeric_limits<uint64_t>::max() >> 7)) {
+                test_complexity = complexity;
+            }
+        } catch (const std::logic_error&) {}
+        if (test_complexity == 0) {
+            fprintf(stderr, "Invalid complexity specified: `%s'\n", arg.c_str());
+            return 1;
+        }
+    }
+
+#ifdef MINISKETCH_VERIFY
+    const char* mode = " in verify mode";
+#else
+    const char* mode = "";
+#endif
+    printf("Running libminisketch tests%s with complexity=%llu\n", mode, (unsigned long long)test_complexity);
+
     TestComputeFunctions();
 
-    for (int j = 2; j <= 64; j += 1) {
-        TestRand(j, 0, 150, 500 / j);
-        TestRand(j, 1, 150, 500 / j);
-        TestRand(j, 2, 150, 500 / j);
+    for (unsigned j = 2; j <= 64; j += 1) {
+        TestRand(j, 0, 150, (test_complexity << 7) / j);
+        TestRand(j, 1, 150, (test_complexity << 7) / j);
+        TestRand(j, 2, 150, (test_complexity << 7) / j);
     }
 
     for (int weight = 2; weight <= 40; weight += 1) {
@@ -192,7 +218,9 @@ int main(void) {
             CHECK(ret2.empty() || ret == ret2);
             CHECK(ret3.empty() || ret == ret3);
         }
+        if (weight >= 16 && test_complexity >> (weight - 16) == 0) break;
     }
 
+    printf("All tests successful.\n");
     return 0;
 }
