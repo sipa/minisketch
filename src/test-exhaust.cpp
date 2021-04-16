@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2018 Pieter Wuille, Greg Maxwell, Gleb Naumenko      *
+ * Copyright (c) 2018,2021 Pieter Wuille, Greg Maxwell, Gleb Naumenko *
  * Distributed under the MIT software license, see the accompanying   *
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
@@ -24,61 +24,96 @@ uint64_t Combination(uint64_t n, uint64_t k) {
     return ret;
 }
 
-std::vector<uint64_t> TestAll(int bits, int impl, int capacity) {
-    bool supported = minisketch_implementation_supported(bits, impl);
-    minisketch* state = minisketch_create(bits, impl, capacity);
-    CHECK(supported == (state != nullptr));
-    std::vector<uint64_t> ret;
-    if (!state) return ret;
+/** Create a vector with Minisketch objects, one for each implementation. */
+std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
+    if (!Minisketch::BitsSupported(bits)) return {};
+    std::vector<Minisketch> ret;
+    for (uint32_t impl = 0; impl <= Minisketch::MaxImplementation(); ++impl) {
+        if (Minisketch::ImplementationSupported(bits, impl)) {
+            ret.push_back(Minisketch(bits, impl, capacity));
+            CHECK((bool)ret.back());
+        } else {
+            CHECK(impl != 0); // implementation 0 must always work
+        }
+    }
+    return ret;
+}
+
+/** Test properties by exhaustively decoding all 2**(bits*capacity) sketches
+ *  with specified capacity and bits. */
+void TestExhaustive(uint32_t bits, size_t capacity) {
+    auto sketches = CreateSketches(bits, capacity);
+    CHECK(!sketches.empty());
+    auto sketches_rebuild = CreateSketches(bits, capacity);
+
+    std::vector<unsigned char> serialized;
+    std::vector<unsigned char> serialized_empty;
+    std::vector<uint64_t> counts; //!< counts[i] = number of results with i elements
+    std::vector<uint64_t> elements_0; //!< Result vector for elements for impl=0
+    std::vector<uint64_t> elements_other; //!< Result vector for elements for other impls
+    std::vector<uint64_t> elements_too_small; //!< Result vector that's too small
+
+    counts.resize(capacity + 1);
+    serialized.resize(sketches[0].GetSerializedSize());
+    serialized_empty.resize(sketches[0].GetSerializedSize());
 
     // Iterate over all (bits)-bit sketches with (capacity) syndromes.
     for (uint64_t x = 0; (x >> (bits * capacity)) == 0; ++x) {
-        // Construct the serialization and load it.
-        unsigned char ser[8];
-        ser[0] = x;
-        ser[1] = x >> 8;
-        ser[2] = x >> 16;
-        ser[3] = x >> 24;
-        ser[4] = x >> 32;
-        ser[5] = x >> 40;
-        ser[6] = x >> 48;
-        ser[7] = x >> 56;
+        // Construct the serialization.
+        for (size_t i = 0; i < serialized.size(); ++i) {
+            serialized[i] = (x >> (i * 8)) & 0xFF;
+        }
 
-        minisketch_deserialize(state, ser);
+        // Compute all the solutions
+        sketches[0].Deserialize(serialized);
+        elements_0.resize(64);
+        bool decodable_0 = sketches[0].Decode(elements_0);
+        std::sort(elements_0.begin(), elements_0.end());
 
-        // Compute all the solutions.
-        uint64_t roots[64];
-        int num_roots = minisketch_decode(state, 64, roots);
+        // Verify that decoding with other implementations agrees.
+        for (size_t impl = 1; impl < sketches.size(); ++impl) {
+            sketches[impl].Deserialize(serialized);
+            elements_other.resize(64);
+            bool decodable_other = sketches[impl].Decode(elements_other);
+            CHECK(decodable_other == decodable_0);
+            std::sort(elements_other.begin(), elements_other.end());
+            CHECK(elements_other == elements_0);
+        }
 
         // If there are solutions:
-        if (num_roots >= 0) {
-            // Asking for one root less should fail.
-            CHECK(num_roots < 1 || minisketch_decode(state, num_roots - 1, roots) == -1);
-            // Reconstruct the sketch from the solutions.
-            minisketch* state2 = minisketch_create(bits, 0, capacity);
-            for (int i = 0; i < num_roots; ++i) {
-                minisketch_add_uint64(state2, roots[i]);
+        if (decodable_0) {
+            if (!elements_0.empty()) {
+                // Decoding with limit one less than the number of elements should fail.
+                elements_too_small.resize(elements_0.size() - 1);
+                for (size_t impl = 0; impl < sketches.size(); ++impl) {
+                    CHECK(!sketches[impl].Decode(elements_too_small));
+                }
             }
-            // Serialize it.
-            unsigned char nser[8] = {0};
-            minisketch_serialize(state2, nser);
-            // Compare it to the original.
-            CHECK(std::equal(ser, ser + 8, nser));
-            // Count it.
-            if (num_roots +1 >= (int)ret.size()) ret.resize(num_roots + 2);
-            ret[num_roots + 1]++;
-            minisketch_destroy(state2);
-        } else {
-            if (ret.size() == 0) ret.resize(1);
-            ret[0]++;
+
+            // Reconstruct the sketch from the solutions.
+            for (size_t impl = 0; impl < sketches.size(); ++impl) {
+                // Clear the sketch.
+                sketches_rebuild[impl].Deserialize(serialized_empty);
+                // Load all decoded elements into it.
+                for (uint64_t elem : elements_0) {
+                    CHECK(elem != 0);
+                    CHECK(elem >> bits == 0);
+                    sketches_rebuild[impl].Add(elem);
+                }
+                // Reserialize the result
+                auto serialized_rebuild = sketches_rebuild[impl].Serialize();
+                // Compare
+                CHECK(serialized == serialized_rebuild);
+                // Count it
+                if (elements_0.size() <= capacity) ++counts[elements_0.size()];
+            }
         }
     }
-    minisketch_destroy(state);
 
-    for (int i = 1; i - 1 <= capacity && (i - 1) >> bits; ++i) {
-        CHECK(ret[i] == Combination((uint64_t(1) << bits) - 1, i - 1));
+    // Verify that the number of decodable sketches with given elements is expected.
+    for (uint64_t i = 0; i <= capacity && i >> bits; ++i) {
+        CHECK(counts[i] == Combination((uint64_t{1} << bits) - 1, i));
     }
-    return ret;
 }
 
 void TestRand(int bits, int impl, int capacity, int iter) {
@@ -208,15 +243,11 @@ int main(int argc, char** argv) {
         TestRand(j, 2, 150, (test_complexity << 7) / j);
     }
 
-    for (int weight = 2; weight <= 40; weight += 1) {
+    for (int weight = 2; weight <= 40; ++weight) {
         for (int bits = 2; bits <= 32 && bits <= weight; ++bits) {
             int capacity = weight / bits;
             if (capacity * bits != weight) continue;
-            auto ret = TestAll(bits, 0, capacity);
-            auto ret2 = TestAll(bits, 1, capacity);
-            auto ret3 = TestAll(bits, 2, capacity);
-            CHECK(ret2.empty() || ret == ret2);
-            CHECK(ret3.empty() || ret == ret3);
+            TestExhaustive(bits, capacity);
         }
         if (weight >= 16 && test_complexity >> (weight - 16) == 0) break;
     }
