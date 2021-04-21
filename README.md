@@ -1,5 +1,5 @@
 # Minisketch: a library for [BCH](https://en.wikipedia.org/wiki/BCH_code)-based set reconciliation
-<img align="right" src="https://people.xiph.org/~greg/minisketch-vs.png" />
+<img align="right" src="doc/minisketch-vs.png" />
 
 `libminisketch` is an optimized standalone MIT-licensed library with C API for constructing and decoding *set sketches*, which can be used for compact set reconciliation and other applications.
 It is an implementation of the PinSketch<sup>[[1]](#myfootnote1)</sup> algorithm. An explanation of the algorithm can be found [here](doc/math.md).
