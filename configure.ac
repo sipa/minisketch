@@ -30,9 +30,6 @@ AC_ARG_ENABLE(benchmark,
     [use_benchmark=$enableval],
     [use_benchmark=no])
 
-dnl Check for pthread compile/link requirements
-AX_PTHREAD
-
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])
@@ -110,3 +107,12 @@ AM_CONDITIONAL([USE_BENCHMARK], [test x"$use_benchmark" = x"yes"])
 AM_CONDITIONAL([USE_TESTS], [test x"$use_tests" != x"no"])
 AC_OUTPUT
 
+echo
+echo "Build Options:"
+echo "  with benchmarks         = $use_benchmark"
+echo "  with tests              = $use_tests"
+echo "  enable clmul fields     = $enable_clmul"
+echo "  CXX                     = $CXX"
+echo "  CXXFLAGS                = $CXXFLAGS"
+echo "  CPPFLAGS                = $CPPFLAGS"
+echo "  LDFLAGS                 = $LDFLAGS"

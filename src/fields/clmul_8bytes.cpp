@@ -117,7 +117,7 @@ Sketch* ConstructClMul8Bytes(int bits, int implementation) {
     case 59: return new SketchImpl<Field59>(implementation, 59);
     case 61: return new SketchImpl<Field61>(implementation, 61);
     case 62: return new SketchImpl<Field62>(implementation, 62);
-    case 64: return new SketchImpl<Field64>(implementation, 63);
+    case 64: return new SketchImpl<Field64>(implementation, 64);
     }
     return nullptr;
 }

@@ -221,7 +221,8 @@ bool RecFindRoots(std::vector<std::vector<typename F::Elem>>& stack, size_t pos,
             // polynomial further into buckets, each corresponding to a subset
             // of 2^(BITS-depth) roots. If after depth splits the degree of
             // the polynomial is >= 2^(BITS-depth), something is wrong.
-            CHECK_RETURN((poly.size() - 2) >> (field.Bits() - depth) == 0, false);
+            CHECK_RETURN(field.Bits() - depth >= std::numeric_limits<decltype(poly.size())>::digits ||
+                (poly.size() - 2) >> (field.Bits() - depth) == 0, false);
         }
 
         depth++;
