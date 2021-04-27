@@ -5,6 +5,7 @@ env:
   BENCH: yes
   TESTRUNS:
   EXEC_CMD:
+  ENABLE_FIELDS:
 
 cat_logs_snippet: &CAT_LOGS
   on_failure:
@@ -27,6 +28,7 @@ merge_base_script_snippet: &MERGE_BASE
 
 env_matrix_snippet: &ENV_MATRIX_VALGRIND
   - env:
+      ENABLE_FIELDS: "7,32,58"
   - env:
       BUILD: distcheck
   - env:
@@ -36,6 +38,7 @@ env_matrix_snippet: &ENV_MATRIX_VALGRIND
 
 env_matrix_snippet: &ENV_MATRIX_SAN
   - env:
+      ENABLE_FIELDS: 28
   - env:
       BUILD: distcheck
   - env:
@@ -46,6 +49,7 @@ env_matrix_snippet: &ENV_MATRIX_SAN
 
 env_matrix_snippet: &ENV_MATRIX_SAN_VALGRIND
   - env:
+      ENABLE_FIELDS: "11,64,37"
   - env:
       BUILD: distcheck
   - env:

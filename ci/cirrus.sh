@@ -12,7 +12,11 @@ valgrind --version || true
 
 ./autogen.sh
 
-./configure --host="$HOST" --enable-benchmark="$BENCH"
+FIELDS=
+if [ -n "$ENABLE_FIELDS" ]; then
+    FIELDS="--enable-fields=$ENABLE_FIELDS"
+fi
+./configure --host="$HOST" --enable-benchmark="$BENCH" $FIELDS
 
 # We have set "-j<n>" in MAKEFLAGS.
 make
