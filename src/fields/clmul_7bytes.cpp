@@ -8,8 +8,6 @@
 
 #if !defined(DISABLE_FIELD_49) || !defined(DISABLE_FIELD_50) || !defined(DISABLE_FIELD_51) || !defined(DISABLE_FIELD_52) || !defined(DISABLE_FIELD_53) || !defined(DISABLE_FIELD_54) || !defined(DISABLE_FIELD_55) || !defined(DISABLE_FIELD_56)
 
-#include <stdint.h>
-
 #include "clmul_common_impl.h"
 
 #include "../int_utils.h"

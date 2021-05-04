@@ -8,8 +8,6 @@
 
 #if !defined(DISABLE_FIELD_33) || !defined(DISABLE_FIELD_34) || !defined(DISABLE_FIELD_35) || !defined(DISABLE_FIELD_36) || !defined(DISABLE_FIELD_37) || !defined(DISABLE_FIELD_38) || !defined(DISABLE_FIELD_39) || !defined(DISABLE_FIELD_40)
 
-#include <stdint.h>
-
 #include "generic_common_impl.h"
 
 #include "../lintrans.h"
