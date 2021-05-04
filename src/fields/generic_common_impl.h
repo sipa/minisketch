@@ -8,7 +8,6 @@
 #define _MINISKETCH_FIELDS_GENERIC_COMMON_IMPL_H_ 1
 
 #include <stdint.h>
-#include <random>
 
 #include "../int_utils.h"
 #include "../lintrans.h"

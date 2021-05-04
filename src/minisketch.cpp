@@ -122,7 +122,196 @@ Sketch* Construct(int bits, int impl)
 extern "C" {
 
 int minisketch_bits_supported(uint32_t bits) {
-    return (bits >= 2) && (bits <= 64);
+#ifndef DISABLE_FIELD_2
+    if (bits == 2) return true;
+#endif
+#ifndef DISABLE_FIELD_3
+    if (bits == 3) return true;
+#endif
+#ifndef DISABLE_FIELD_4
+    if (bits == 4) return true;
+#endif
+#ifndef DISABLE_FIELD_5
+    if (bits == 5) return true;
+#endif
+#ifndef DISABLE_FIELD_6
+    if (bits == 6) return true;
+#endif
+#ifndef DISABLE_FIELD_7
+    if (bits == 7) return true;
+#endif
+#ifndef DISABLE_FIELD_8
+    if (bits == 8) return true;
+#endif
+#ifndef DISABLE_FIELD_9
+    if (bits == 9) return true;
+#endif
+#ifndef DISABLE_FIELD_10
+    if (bits == 10) return true;
+#endif
+#ifndef DISABLE_FIELD_11
+    if (bits == 11) return true;
+#endif
+#ifndef DISABLE_FIELD_12
+    if (bits == 12) return true;
+#endif
+#ifndef DISABLE_FIELD_13
+    if (bits == 13) return true;
+#endif
+#ifndef DISABLE_FIELD_14
+    if (bits == 14) return true;
+#endif
+#ifndef DISABLE_FIELD_15
+    if (bits == 15) return true;
+#endif
+#ifndef DISABLE_FIELD_16
+    if (bits == 16) return true;
+#endif
+#ifndef DISABLE_FIELD_17
+    if (bits == 17) return true;
+#endif
+#ifndef DISABLE_FIELD_18
+    if (bits == 18) return true;
+#endif
+#ifndef DISABLE_FIELD_19
+    if (bits == 19) return true;
+#endif
+#ifndef DISABLE_FIELD_20
+    if (bits == 20) return true;
+#endif
+#ifndef DISABLE_FIELD_21
+    if (bits == 21) return true;
+#endif
+#ifndef DISABLE_FIELD_22
+    if (bits == 22) return true;
+#endif
+#ifndef DISABLE_FIELD_23
+    if (bits == 23) return true;
+#endif
+#ifndef DISABLE_FIELD_24
+    if (bits == 24) return true;
+#endif
+#ifndef DISABLE_FIELD_25
+    if (bits == 25) return true;
+#endif
+#ifndef DISABLE_FIELD_26
+    if (bits == 26) return true;
+#endif
+#ifndef DISABLE_FIELD_27
+    if (bits == 27) return true;
+#endif
+#ifndef DISABLE_FIELD_28
+    if (bits == 28) return true;
+#endif
+#ifndef DISABLE_FIELD_29
+    if (bits == 29) return true;
+#endif
+#ifndef DISABLE_FIELD_30
+    if (bits == 30) return true;
+#endif
+#ifndef DISABLE_FIELD_31
+    if (bits == 31) return true;
+#endif
+#ifndef DISABLE_FIELD_32
+    if (bits == 32) return true;
+#endif
+#ifndef DISABLE_FIELD_33
+    if (bits == 33) return true;
+#endif
+#ifndef DISABLE_FIELD_34
+    if (bits == 34) return true;
+#endif
+#ifndef DISABLE_FIELD_35
+    if (bits == 35) return true;
+#endif
+#ifndef DISABLE_FIELD_36
+    if (bits == 36) return true;
+#endif
+#ifndef DISABLE_FIELD_37
+    if (bits == 37) return true;
+#endif
+#ifndef DISABLE_FIELD_38
+    if (bits == 38) return true;
+#endif
+#ifndef DISABLE_FIELD_39
+    if (bits == 39) return true;
+#endif
+#ifndef DISABLE_FIELD_40
+    if (bits == 40) return true;
+#endif
+#ifndef DISABLE_FIELD_41
+    if (bits == 41) return true;
+#endif
+#ifndef DISABLE_FIELD_42
+    if (bits == 42) return true;
+#endif
+#ifndef DISABLE_FIELD_43
+    if (bits == 43) return true;
+#endif
+#ifndef DISABLE_FIELD_44
+    if (bits == 44) return true;
+#endif
+#ifndef DISABLE_FIELD_45
+    if (bits == 45) return true;
+#endif
+#ifndef DISABLE_FIELD_46
+    if (bits == 46) return true;
+#endif
+#ifndef DISABLE_FIELD_47
+    if (bits == 47) return true;
+#endif
+#ifndef DISABLE_FIELD_48
+    if (bits == 48) return true;
+#endif
+#ifndef DISABLE_FIELD_49
+    if (bits == 49) return true;
+#endif
+#ifndef DISABLE_FIELD_50
+    if (bits == 50) return true;
+#endif
+#ifndef DISABLE_FIELD_51
+    if (bits == 51) return true;
+#endif
+#ifndef DISABLE_FIELD_52
+    if (bits == 52) return true;
+#endif
+#ifndef DISABLE_FIELD_53
+    if (bits == 53) return true;
+#endif
+#ifndef DISABLE_FIELD_54
+    if (bits == 54) return true;
+#endif
+#ifndef DISABLE_FIELD_55
+    if (bits == 55) return true;
+#endif
+#ifndef DISABLE_FIELD_56
+    if (bits == 56) return true;
+#endif
+#ifndef DISABLE_FIELD_57
+    if (bits == 57) return true;
+#endif
+#ifndef DISABLE_FIELD_58
+    if (bits == 58) return true;
+#endif
+#ifndef DISABLE_FIELD_59
+    if (bits == 59) return true;
+#endif
+#ifndef DISABLE_FIELD_60
+    if (bits == 60) return true;
+#endif
+#ifndef DISABLE_FIELD_61
+    if (bits == 61) return true;
+#endif
+#ifndef DISABLE_FIELD_62
+    if (bits == 62) return true;
+#endif
+#ifndef DISABLE_FIELD_63
+    if (bits == 63) return true;
+#endif
+#ifndef DISABLE_FIELD_64
+    if (bits == 64) return true;
+#endif
+    return false;
 }
 
 uint32_t minisketch_implementation_max() {

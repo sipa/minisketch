@@ -30,6 +30,29 @@ AC_ARG_ENABLE(benchmark,
     [use_benchmark=$enableval],
     [use_benchmark=no])
 
+m4_define([SUPPORTED_FIELDS], [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64])
+
+AC_MSG_CHECKING([which field sizes to build])
+AC_ARG_ENABLE([fields], AS_HELP_STRING([--enable-fields=LIST], [Comma-separated list of field sizes to build. Default=all. Available sizes:] m4_translit(m4_defn([SUPPORTED_FIELDS]), [,], [ ])), [], [enable_fields=SUPPORTED_FIELDS])
+have_disabled_fields=no
+have_enabled_fields=no
+m4_foreach([FIELD], [SUPPORTED_FIELDS], [
+    case ",$enable_fields," in
+    *,FIELD,*)
+        have_enabled_fields=yes
+        ;;
+    *)
+        AC_DEFINE(DISABLE_FIELD_[]FIELD, [1],
+        [Define to 1 to remove support for field size] FIELD [.])
+        have_disabled_fields=yes
+        ;;
+    esac
+])
+AC_MSG_RESULT([$enable_fields])
+if test "x$have_enabled_fields" = xno; then
+    AC_MSG_ERROR([No field sizes are enabled.])
+fi
+
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
 AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])
@@ -116,3 +139,8 @@ echo "  CXX                     = $CXX"
 echo "  CXXFLAGS                = $CXXFLAGS"
 echo "  CPPFLAGS                = $CPPFLAGS"
 echo "  LDFLAGS                 = $LDFLAGS"
+if test "$have_disabled_fields" = "yes"; then
+echo
+echo "Only compiling in support for field sizes: $enable_fields"
+echo "WARNING: this means the library will lack support for other field sizes entirely"
+fi

@@ -31,10 +31,12 @@ std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
     std::vector<Minisketch> ret;
     for (uint32_t impl = 0; impl <= Minisketch::MaxImplementation(); ++impl) {
         if (Minisketch::ImplementationSupported(bits, impl)) {
+            CHECK(Minisketch::BitsSupported(bits));
             ret.push_back(Minisketch(bits, impl, capacity));
             CHECK((bool)ret.back());
         } else {
-            CHECK(impl != 0); // implementation 0 must always work
+            // implementation 0 must always work unless field size is disabled
+            CHECK(impl != 0 || !Minisketch::BitsSupported(bits));
         }
     }
     return ret;
@@ -44,7 +46,7 @@ std::vector<Minisketch> CreateSketches(uint32_t bits, size_t capacity) {
  *  with specified capacity and bits. */
 void TestExhaustive(uint32_t bits, size_t capacity) {
     auto sketches = CreateSketches(bits, capacity);
-    CHECK(!sketches.empty());
+    if (sketches.empty()) return;
     auto sketches_rebuild = CreateSketches(bits, capacity);
 
     std::vector<unsigned char> serialized;
@@ -135,7 +137,7 @@ void TestRandomized(uint32_t bits, size_t max_capacity, size_t iter) {
         uint64_t capacity = capacity_dist(rnd);
         auto sketches = CreateSketches(bits, capacity);
         // Sanity checks
-        CHECK(!sketches.empty());
+        if (sketches.empty()) return;
         for (size_t impl = 0; impl < sketches.size(); ++impl) {
             CHECK(sketches[impl].GetBits() == bits);
             CHECK(sketches[impl].GetCapacity() == capacity);

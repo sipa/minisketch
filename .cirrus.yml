@@ -5,9 +5,12 @@ env:
   BENCH: yes
   TESTRUNS:
   EXEC_CMD:
+  ENABLE_FIELDS:
 
 cat_logs_snippet: &CAT_LOGS
   on_failure:
+    cat_test_log_script:
+      - cat test-suite.log || true
     cat_config_log_script:
       - cat config.log || true
     cat_test_env_script:
@@ -23,25 +26,50 @@ merge_base_script_snippet: &MERGE_BASE
     - git config --global user.name "ci"
     - git merge FETCH_HEAD  # Merge base to detect silent merge conflicts
 
+env_matrix_snippet: &ENV_MATRIX_VALGRIND
+  - env:
+      ENABLE_FIELDS: "7,32,58"
+  - env:
+      BUILD: distcheck
+  - env:
+      EXEC_CMD: valgrind --error-exitcode=42
+      TESTRUNS: 1
+      BUILD:
+
+env_matrix_snippet: &ENV_MATRIX_SAN
+  - env:
+      ENABLE_FIELDS: 28
+  - env:
+      BUILD: distcheck
+  - env:
+      CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
+      LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
+      UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+      BENCH: no
+
+env_matrix_snippet: &ENV_MATRIX_SAN_VALGRIND
+  - env:
+      ENABLE_FIELDS: "11,64,37"
+  - env:
+      BUILD: distcheck
+  - env:
+      EXEC_CMD: valgrind --error-exitcode=42
+      TESTRUNS: 1
+      BUILD:
+  - env:
+      CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
+      LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
+      UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+      BENCH: no
+
 task:
   name: "x86_64: Linux (Debian stable)"
   container:
     dockerfile: ci/linux-debian.Dockerfile
     memory: 2G
     cpu: 4
-  matrix: &ENV_MATRIX
-    - env:
-    - env:
-        BUILD: distcheck
-    - env:
-        CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
-        LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
-        UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
-        BENCH: no
-    - env:
-        EXEC_CMD: valgrind --error-exitcode=42
-        TESTRUNS: 1
-        BUILD:
+  matrix:
+    << : *ENV_MATRIX_SAN_VALGRIND
   matrix:
     - env:
         CC: gcc
@@ -61,6 +89,8 @@ task:
   env:
     HOST: i686-linux-gnu
   matrix:
+    << : *ENV_MATRIX_VALGRIND
+  matrix:
     - env:
         CC: i686-linux-gnu-gcc
     - env:
@@ -77,12 +107,7 @@ task:
     # Cirrus gives us a fixed number of 12 virtual CPUs.
     MAKEFLAGS: -j13
   matrix:
-    - env: {}
-    - env: {BUILD: distcheck}
-    - env:
-        CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
-        LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
-        UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+    << : *ENV_MATRIX_SAN
   matrix:
     - env:
         CC: gcc-9
