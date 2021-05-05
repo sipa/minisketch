@@ -303,7 +303,7 @@ public:
         ssize_t ret = minisketch_decode(m_minisketch.get(), max_elements, result.data());
         if (ret == -1) return {};
         result.resize(ret);
-        return std::move(result);
+        return result;
     }
 
     /** C++17 only: similar to Decode(), but with specified false positive probability. */
