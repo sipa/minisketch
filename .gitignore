@@ -31,6 +31,5 @@ configure
 libtool
 stamp-h1
 
-test-exhaust
-test-exhaust-verify
+test*
 bench
