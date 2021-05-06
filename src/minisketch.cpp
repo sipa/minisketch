@@ -332,7 +332,7 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) 
             delete sketch;
             return 1;
         }
-    } catch (std::bad_alloc& ba) {}
+    } catch (const std::bad_alloc&) {}
     return 0;
 }
 
@@ -342,14 +342,14 @@ minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t cap
         if (sketch) {
             try {
                 sketch->Init(capacity);
-            } catch (std::bad_alloc& ba) {
+            } catch (const std::bad_alloc&) {
                 delete sketch;
                 throw;
             }
             sketch->Ready();
         }
         return (minisketch*)sketch;
-    } catch (std::bad_alloc& ba) {
+    } catch (const std::bad_alloc&) {
         return nullptr;
     }
 }

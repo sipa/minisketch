@@ -8,7 +8,7 @@
 #define _MINISKETCH_FIELDS_CLMUL_COMMON_IMPL_H_ 1
 
 #include <stdint.h>
-#include <x86intrin.h>
+#include <immintrin.h>
 
 #include "../int_utils.h"
 #include "../lintrans.h"

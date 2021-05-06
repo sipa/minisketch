@@ -3,7 +3,12 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <unistd.h>
+
+#ifdef _MSC_VER
+#  include <compat.h>
+#else
+#  include <unistd.h>
+#endif
 
 #ifdef __cplusplus
 #  if __cplusplus >= 201103L
