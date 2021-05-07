@@ -104,6 +104,8 @@ void minisketch_deserialize(minisketch* sketch, const unsigned char* input);
  * If the element to be added is 0 (after potentially dropping the most significant
  * bits), then this function is a no-op. Sketches cannot contain an element with
  * the value 0.
+ *
+ * Note that adding the same element a second time removes it again.
  */
 void minisketch_add_uint64(minisketch* sketch, uint64_t element);
 
@@ -246,7 +248,7 @@ public:
         return *this;
     }
 
-    /** See miniksetch_add_element(). */
+    /** See minisketch_add_uint64(). */
     Minisketch& Add(uint64_t element) noexcept
     {
         minisketch_add_uint64(m_minisketch.get(), element);
