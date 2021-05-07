@@ -12,7 +12,11 @@
 #include "sketch.h"
 
 #ifdef HAVE_CLMUL
-#include <cpuid.h>
+#  ifdef _MSC_VER
+#    include <intrin.h>
+#  else
+#    include <cpuid.h>
+#  endif
 #endif
 
 Sketch* ConstructGeneric1Byte(int bits, int implementation);
@@ -80,8 +84,14 @@ Sketch* Construct(int bits, int impl)
 #ifdef HAVE_CLMUL
     case FieldImpl::CLMUL:
     case FieldImpl::CLMUL_TRI: {
+#ifdef _MSC_VER
+        int regs[4];
+        __cpuid(regs, 1);
+        if (regs[2] & 0x2) {
+#else
         uint32_t eax, ebx, ecx, edx;
         if (__get_cpuid(1, &eax, &ebx, &ecx, &edx) && (ecx & 0x2)) {
+#endif
             switch ((bits + 7) / 8) {
             case 1:
                 if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul1Byte(bits, impl);
