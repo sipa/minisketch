@@ -4,13 +4,14 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
 
-#include "../include/minisketch.h"
-#include <vector>
 #include <algorithm>
-#include <stdexcept>
+#include <cstdio>
 #include <limits>
 #include <random>
-#include <stdio.h>
+#include <stdexcept>
+#include <vector>
+
+#include "../include/minisketch.h"
 #include "util.h"
 
 namespace {
