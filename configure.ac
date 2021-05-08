@@ -99,6 +99,17 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [
 
 AX_CHECK_LINK_FLAG([[-Wl,--exclude-libs,ALL]],[LDFLAGS="-Wl,--exclude-libs,ALL $LDFLAGS"])
 
+case $host in
+  *mingw*)
+     dnl -static is interpreted by libtool, where it has a different meaning.
+     dnl In libtool-speak, it's -all-static.
+     AX_CHECK_LINK_FLAG([[-static]],[LIBTOOL_APP_LDFLAGS="$LIBTOOL_APP_LDFLAGS -all-static"])
+     ;;
+  *)
+     AX_CHECK_LINK_FLAG([[-static]],[LIBTOOL_APP_LDFLAGS="-static"])
+     ;;
+esac
+
 AX_CHECK_COMPILE_FLAG([-Wall],[WARN_CXXFLAGS="$WARN_CXXFLAGS -Wall"],,[[$CXXFLAG_WERROR]])
 ## Some compilers (gcc) ignore unknown -Wno-* options, but warn about all
 ## unknown options if any other warning is produced. Test the -Wfoo case, and
@@ -136,6 +147,7 @@ AC_SUBST(WARN_CXXFLAGS)
 AC_SUBST(NOWARN_CXXFLAGS)
 AC_SUBST(VERIFY_DEFINES)
 AC_SUBST(RELEASE_DEFINES)
+AC_SUBST(LIBTOOL_APP_LDFLAGS)
 AM_CONDITIONAL([ENABLE_CLMUL],[test x$enable_clmul = xyes])
 AM_CONDITIONAL([USE_BENCHMARK], [test x"$use_benchmark" = x"yes"])
 AM_CONDITIONAL([USE_TESTS], [test x"$use_tests" != x"no"])
