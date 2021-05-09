@@ -42,8 +42,8 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation);
 
 /** Construct a sketch for a given element size, implementation and capacity.
  *
- * If the combination of `bits` and `implementation` is unavailable, or if
- * `capacity` is 0, NULL is returned. If minisketch_implementation_supported
+ * If the combination of `bits` and `implementation` is unavailable, or when
+ * OOM occurs, NULL is returned. If minisketch_implementation_supported
  * returns 1 for the specified bits and implementation, this will always succeed
  * (except when allocation fails).
  *
