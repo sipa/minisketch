@@ -337,9 +337,6 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) 
 }
 
 minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t capacity) {
-    if (capacity == 0) {
-        return nullptr;
-    }
     try {
         Sketch* sketch = Construct(bits, implementation);
         if (sketch) {

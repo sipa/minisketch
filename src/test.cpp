@@ -123,7 +123,7 @@ void TestExhaustive(uint32_t bits, size_t capacity) {
 /** Test properties of sketches with random elements put in. */
 void TestRandomized(uint32_t bits, size_t max_capacity, size_t iter) {
     std::random_device rnd;
-    std::uniform_int_distribution<uint64_t> capacity_dist(1, std::min<uint64_t>(std::numeric_limits<uint64_t>::max() >> (64 - bits), max_capacity));
+    std::uniform_int_distribution<uint64_t> capacity_dist(0, std::min<uint64_t>(std::numeric_limits<uint64_t>::max() >> (64 - bits), max_capacity));
     std::uniform_int_distribution<uint64_t> element_dist(1, std::numeric_limits<uint64_t>::max() >> (64 - bits));
     std::uniform_int_distribution<uint64_t> rand64(0, std::numeric_limits<uint64_t>::max());
     std::uniform_int_distribution<int64_t> size_offset_dist(-3, 3);
@@ -298,8 +298,11 @@ int main(int argc, char** argv) {
         TestRandomized(j, 4096, test_complexity / j);
     }
 
-    for (int weight = 2; weight <= 40; ++weight) {
-        for (int bits = 2; bits <= 32 && bits <= weight; ++bits) {
+    // Test capacity==0 together with all field sizes, and then
+    // all combinations of bits and capacity up to a certain bits*capacity,
+    // depending on test_complexity.
+    for (int weight = 0; weight <= 40; ++weight) {
+        for (int bits = 2; weight == 0 ? bits <= 64 : (bits <= 32 && bits <= weight); ++bits) {
             int capacity = weight / bits;
             if (capacity * bits != weight) continue;
             TestExhaustive(bits, capacity);
