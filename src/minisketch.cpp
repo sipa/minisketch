@@ -4,8 +4,13 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
 
+
 #include <new>
 
+#define MINISKETCH_BUILD
+#ifdef _MINISKETCH_H_
+#  error "minisketch.h cannot be included before minisketch.cpp"
+#endif
 #include "../include/minisketch.h"
 
 #include "false_positives.h"
