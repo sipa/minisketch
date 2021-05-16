@@ -13,6 +13,10 @@
 #include <algorithm>
 #include <type_traits>
 
+#ifdef _MSC_VER
+#  include <intrin.h>
+#endif
+
 template<int bits>
 static constexpr inline uint64_t Rot(uint64_t x) { return (x << bits) | (x >> (64 - bits)); }
 
@@ -135,6 +139,17 @@ static inline int CountBits(I val, int max) {
     } else {
         return std::numeric_limits<unsigned long long>::digits - __builtin_clzll(val);
     }
+#elif _MSC_VER
+    (void)max;
+    unsigned long index;
+    unsigned char ret;
+    if (std::numeric_limits<I>::digits <= 32) {
+        ret = _BitScanReverse(&index, val);
+    } else {
+        ret = _BitScanReverse64(&index, val);
+    }
+    if (!ret) return 0;
+    return index;
 #else
     while (max && (val >> (max - 1) == 0)) --max;
     return max;

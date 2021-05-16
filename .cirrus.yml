@@ -146,7 +146,6 @@ task:
   env:
     EXEC_CMD: wine
     HOST: x86_64-w64-mingw32
-    CXXFLAGS: -O2 -static -static-libgcc -static-libstdc++
     BUILD:
   << : *MERGE_BASE
   test_script:

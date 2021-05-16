@@ -4,15 +4,24 @@
  * file LICENSE or http://www.opensource.org/licenses/mit-license.php.*
  **********************************************************************/
 
+
 #include <new>
 
+#define MINISKETCH_BUILD
+#ifdef _MINISKETCH_H_
+#  error "minisketch.h cannot be included before minisketch.cpp"
+#endif
 #include "../include/minisketch.h"
 
 #include "false_positives.h"
 #include "sketch.h"
 
 #ifdef HAVE_CLMUL
-#include <cpuid.h>
+#  ifdef _MSC_VER
+#    include <intrin.h>
+#  else
+#    include <cpuid.h>
+#  endif
 #endif
 
 Sketch* ConstructGeneric1Byte(int bits, int implementation);
@@ -80,8 +89,14 @@ Sketch* Construct(int bits, int impl)
 #ifdef HAVE_CLMUL
     case FieldImpl::CLMUL:
     case FieldImpl::CLMUL_TRI: {
+#ifdef _MSC_VER
+        int regs[4];
+        __cpuid(regs, 1);
+        if (regs[2] & 0x2) {
+#else
         uint32_t eax, ebx, ecx, edx;
         if (__get_cpuid(1, &eax, &ebx, &ecx, &edx) && (ecx & 0x2)) {
+#endif
             switch ((bits + 7) / 8) {
             case 1:
                 if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul1Byte(bits, impl);
@@ -332,7 +347,7 @@ int minisketch_implementation_supported(uint32_t bits, uint32_t implementation) 
             delete sketch;
             return 1;
         }
-    } catch (std::bad_alloc& ba) {}
+    } catch (const std::bad_alloc&) {}
     return 0;
 }
 
@@ -342,14 +357,14 @@ minisketch* minisketch_create(uint32_t bits, uint32_t implementation, size_t cap
         if (sketch) {
             try {
                 sketch->Init(capacity);
-            } catch (std::bad_alloc& ba) {
+            } catch (const std::bad_alloc&) {
                 delete sketch;
                 throw;
             }
             sketch->Ready();
         }
         return (minisketch*)sketch;
-    } catch (std::bad_alloc& ba) {
+    } catch (const std::bad_alloc&) {
         return nullptr;
     }
 }

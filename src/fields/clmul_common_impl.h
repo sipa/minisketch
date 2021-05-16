@@ -8,14 +8,27 @@
 #define _MINISKETCH_FIELDS_CLMUL_COMMON_IMPL_H_ 1
 
 #include <stdint.h>
-#include <x86intrin.h>
+#include <immintrin.h>
 
 #include "../int_utils.h"
 #include "../lintrans.h"
 
 namespace {
 
-template<typename I, int BITS, I MOD> I MulWithClMulReduce(I a, I b)
+// The memory sanitizer in clang < 11 cannot reason through _mm_clmulepi64_si128 calls.
+// Disable memory sanitization in the functions using them for those compilers.
+#if defined(__clang__) && (__clang_major__ < 11)
+#  if defined(__has_feature)
+#    if __has_feature(memory_sanitizer)
+#      define NO_SANITIZE_MEMORY __attribute__((no_sanitize("memory")))
+#    endif
+#  endif
+#endif
+#ifndef NO_SANITIZE_MEMORY
+#  define NO_SANITIZE_MEMORY
+#endif
+
+template<typename I, int BITS, I MOD> NO_SANITIZE_MEMORY I MulWithClMulReduce(I a, I b)
 {
     static constexpr I MASK = Mask<BITS, I>();
 
@@ -52,7 +65,7 @@ template<typename I, int BITS, I MOD> I MulWithClMulReduce(I a, I b)
     }
 }
 
-template<typename I, int BITS, int POS> I MulTrinomial(I a, I b)
+template<typename I, int BITS, int POS> NO_SANITIZE_MEMORY I MulTrinomial(I a, I b)
 {
     static constexpr I MASK = Mask<BITS, I>();
 
