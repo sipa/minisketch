@@ -64,7 +64,7 @@ fi
 
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
-AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 enable_clmul=
 AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]],[AC_LANG_PROGRAM([
   #include <stdint.h>
