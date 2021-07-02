@@ -175,15 +175,15 @@ def pick_modulus(bits, style):
     elif style == CLMUL:
         # Fast CLMUL reduction requires that bits + the highest
         #  set bit are less than 66.
-        moduli = filter(lambda x: bits+x[1] <= 66, moduli) + moduli
+        moduli = list(filter((lambda x: bits+x[1] <= 66), moduli)) + moduli
         multi_sqr = True
         need_trans = True
         if not moduli or moduli[0][2].change_ring(ZZ)(2) == 3 + 2**bits:
             # For modulus 3, CLMUL_TRI is obviously better.
             return None
     elif style == CLMUL_TRI:
-        moduli = filter(lambda x: bits+x[1] <= 66, moduli) + moduli
-        moduli = filter(lambda x: x[0] == 3, moduli)
+        moduli = list(filter(lambda x: bits+x[1] <= 66, moduli)) + moduli
+        moduli = list(filter(lambda x: x[0] == 3, moduli))
         multi_sqr = True
         need_trans = True
     else:
@@ -273,10 +273,13 @@ def print_result(bits, style):
         #  F(2) linear and can be computed by a simple bit-matrix.
         # Repeated squaring is especially useful in powering ladders such as
         #  for inversion.
-        sqr2 = "nullptr"
-        sqr4 = "nullptr"
-        sqr8 = "nullptr"
-        sqr16 = "nullptr"
+        # When certain repeated squaring tables are not in use, use the QRT
+        # table instead to make the C++ compiler happy (it always has the
+        # same type).
+        sqr2 = "&QRT_TABLE_%s" % table_id
+        sqr4 = "&QRT_TABLE_%s" % table_id
+        sqr8 = "&QRT_TABLE_%s" % table_id
+        sqr16 = "&QRT_TABLE_%s" % table_id
         if ((bits - 1) >= 4):
             if include_table:
                 print("constexpr %s SQR2_TABLE_%s({%s});" % (rtyp, table_id, ", ".join([fmt(x,typ) for x in sqr_table(f, bits, 2)])))
