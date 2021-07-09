@@ -278,7 +278,7 @@ int main(int argc, char** argv) {
             }
         } catch (const std::logic_error&) {}
         if (test_complexity == 0) {
-            fprintf(stderr, "Invalid complexity specified: `%s'\n", arg.c_str());
+            fprintf(stderr, "Invalid complexity specified: '%s'\n", arg.c_str());
             return 1;
         }
     }

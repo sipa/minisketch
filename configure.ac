@@ -14,15 +14,6 @@ AC_LANG([C++])
 
 AC_PATH_PROG(CCACHE,ccache)
 
-saved_CXXFLAGS="$CXXFLAGS"
-CXXFLAGS="-fvisibility=hidden $CXXFLAGS"
-AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden])
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[char foo;]])],
-    [ AC_MSG_RESULT([yes]) ],
-    [ AC_MSG_RESULT([no])
-      CXXFLAGS="$saved_CXXFLAGS"
-    ])
-
 AC_ARG_ENABLE([ccache],
   [AS_HELP_STRING([--disable-ccache],
   [do not use ccache for building (default is to use if found)])],
@@ -64,7 +55,7 @@ fi
 
 AX_CHECK_COMPILE_FLAG([-Werror],[CXXFLAG_WERROR="-Werror"],[CXXFLAG_WERROR=""])
 
-AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory], [nodefault])
+AX_CXX_COMPILE_STDCXX([11], [noext], [mandatory])
 enable_clmul=
 AX_CHECK_COMPILE_FLAG([-mpclmul],[[enable_clmul=yes]],,[[$CXXFLAG_WERROR]],[AC_LANG_PROGRAM([
   #include <stdint.h>
@@ -111,6 +102,8 @@ case $host in
 esac
 
 AX_CHECK_COMPILE_FLAG([-Wall],[WARN_CXXFLAGS="$WARN_CXXFLAGS -Wall"],,[[$CXXFLAG_WERROR]])
+AX_CHECK_COMPILE_FLAG([-fvisibility=hidden],[CXXFLAGS="$CXXFLAGS -fvisibility=hidden"],[],[$CXXFLAG_WERROR])
+
 ## Some compilers (gcc) ignore unknown -Wno-* options, but warn about all
 ## unknown options if any other warning is produced. Test the -Wfoo case, and
 ## set the -Wno-foo case if it works.
