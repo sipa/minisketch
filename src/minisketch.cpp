@@ -102,40 +102,56 @@ Sketch* Construct(int bits, int impl)
         default:
             return nullptr;
         }
+        break;
 #ifdef HAVE_CLMUL
     case FieldImpl::CLMUL:
-    case FieldImpl::CLMUL_TRI: {
         if (EnableClmul()) {
             switch ((bits + 7) / 8) {
             case 1:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul1Byte(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri1Byte(bits, impl);
+                return ConstructClMul1Byte(bits, impl);
             case 2:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul2Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri2Bytes(bits, impl);
+                return ConstructClMul2Bytes(bits, impl);
             case 3:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul3Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri3Bytes(bits, impl);
+                return ConstructClMul3Bytes(bits, impl);
             case 4:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul4Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri4Bytes(bits, impl);
+                return ConstructClMul4Bytes(bits, impl);
             case 5:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul5Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri5Bytes(bits, impl);
+                return ConstructClMul5Bytes(bits, impl);
             case 6:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul6Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri6Bytes(bits, impl);
+                return ConstructClMul6Bytes(bits, impl);
             case 7:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul7Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri7Bytes(bits, impl);
+                return ConstructClMul7Bytes(bits, impl);
             case 8:
-                if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul8Bytes(bits, impl);
-                if (FieldImpl(impl) == FieldImpl::CLMUL_TRI) return ConstructClMulTri8Bytes(bits, impl);
+                return ConstructClMul8Bytes(bits, impl);
             default:
                 return nullptr;
             }
         }
-    }
+        break;
+    case FieldImpl::CLMUL_TRI:
+        if (EnableClmul()) {
+            switch ((bits + 7) / 8) {
+            case 1:
+                return ConstructClMulTri1Byte(bits, impl);
+            case 2:
+                return ConstructClMulTri2Bytes(bits, impl);
+            case 3:
+                return ConstructClMulTri3Bytes(bits, impl);
+            case 4:
+                return ConstructClMulTri4Bytes(bits, impl);
+            case 5:
+                return ConstructClMulTri5Bytes(bits, impl);
+            case 6:
+                return ConstructClMulTri6Bytes(bits, impl);
+            case 7:
+                return ConstructClMulTri7Bytes(bits, impl);
+            case 8:
+                return ConstructClMulTri8Bytes(bits, impl);
+            default:
+                return nullptr;
+            }
+        }
+        break;
 #endif
     }
     return nullptr;
