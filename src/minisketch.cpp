@@ -62,6 +62,22 @@ enum class FieldImpl {
 #endif
 };
 
+static inline bool EnableClmul()
+{
+#ifdef HAVE_CLMUL
+#ifdef _MSC_VER
+    int regs[4];
+    __cpuid(regs, 1);
+    return (regs[2] & 0x2);
+#else
+    uint32_t eax, ebx, ecx, edx;
+    return (__get_cpuid(1, &eax, &ebx, &ecx, &edx) && (ecx & 0x2));
+#endif
+#else
+    return false;
+#endif
+}
+
 Sketch* Construct(int bits, int impl)
 {
     switch (FieldImpl(impl)) {
@@ -89,14 +105,7 @@ Sketch* Construct(int bits, int impl)
 #ifdef HAVE_CLMUL
     case FieldImpl::CLMUL:
     case FieldImpl::CLMUL_TRI: {
-#ifdef _MSC_VER
-        int regs[4];
-        __cpuid(regs, 1);
-        if (regs[2] & 0x2) {
-#else
-        uint32_t eax, ebx, ecx, edx;
-        if (__get_cpuid(1, &eax, &ebx, &ecx, &edx) && (ecx & 0x2)) {
-#endif
+        if (EnableClmul()) {
             switch ((bits + 7) / 8) {
             case 1:
                 if (FieldImpl(impl) == FieldImpl::CLMUL) return ConstructClMul1Byte(bits, impl);
