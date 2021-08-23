@@ -315,14 +315,14 @@ def print_result(bits, style):
         assert(False)
 
 for bits in range(2, 65):
-    print("#ifndef DISABLE_FIELD_%i" % bits)
+    print("#ifdef ENABLE_FIELD_INT_%i" % bits)
     print("// %i bit field" % bits)
     print_result(bits, INT)
     print("#endif")
     print("")
 
 for bits in range(2, 65):
-    print("#ifndef DISABLE_FIELD_%i" % bits)
+    print("#ifdef ENABLE_FIELD_INT_%i" % bits)
     print("// %i bit field" % bits)
     print_result(bits, CLMUL)
     print_result(bits, CLMUL_TRI)

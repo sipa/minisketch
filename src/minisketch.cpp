@@ -14,6 +14,7 @@
 #include "../include/minisketch.h"
 
 #include "false_positives.h"
+#include "fielddefines.h"
 #include "sketch.h"
 
 #ifdef HAVE_CLMUL
@@ -162,193 +163,193 @@ Sketch* Construct(int bits, int impl)
 extern "C" {
 
 int minisketch_bits_supported(uint32_t bits) {
-#ifndef DISABLE_FIELD_2
+#ifdef ENABLE_FIELD_INT_2
     if (bits == 2) return true;
 #endif
-#ifndef DISABLE_FIELD_3
+#ifdef ENABLE_FIELD_INT_3
     if (bits == 3) return true;
 #endif
-#ifndef DISABLE_FIELD_4
+#ifdef ENABLE_FIELD_INT_4
     if (bits == 4) return true;
 #endif
-#ifndef DISABLE_FIELD_5
+#ifdef ENABLE_FIELD_INT_5
     if (bits == 5) return true;
 #endif
-#ifndef DISABLE_FIELD_6
+#ifdef ENABLE_FIELD_INT_6
     if (bits == 6) return true;
 #endif
-#ifndef DISABLE_FIELD_7
+#ifdef ENABLE_FIELD_INT_7
     if (bits == 7) return true;
 #endif
-#ifndef DISABLE_FIELD_8
+#ifdef ENABLE_FIELD_INT_8
     if (bits == 8) return true;
 #endif
-#ifndef DISABLE_FIELD_9
+#ifdef ENABLE_FIELD_INT_9
     if (bits == 9) return true;
 #endif
-#ifndef DISABLE_FIELD_10
+#ifdef ENABLE_FIELD_INT_10
     if (bits == 10) return true;
 #endif
-#ifndef DISABLE_FIELD_11
+#ifdef ENABLE_FIELD_INT_11
     if (bits == 11) return true;
 #endif
-#ifndef DISABLE_FIELD_12
+#ifdef ENABLE_FIELD_INT_12
     if (bits == 12) return true;
 #endif
-#ifndef DISABLE_FIELD_13
+#ifdef ENABLE_FIELD_INT_13
     if (bits == 13) return true;
 #endif
-#ifndef DISABLE_FIELD_14
+#ifdef ENABLE_FIELD_INT_14
     if (bits == 14) return true;
 #endif
-#ifndef DISABLE_FIELD_15
+#ifdef ENABLE_FIELD_INT_15
     if (bits == 15) return true;
 #endif
-#ifndef DISABLE_FIELD_16
+#ifdef ENABLE_FIELD_INT_16
     if (bits == 16) return true;
 #endif
-#ifndef DISABLE_FIELD_17
+#ifdef ENABLE_FIELD_INT_17
     if (bits == 17) return true;
 #endif
-#ifndef DISABLE_FIELD_18
+#ifdef ENABLE_FIELD_INT_18
     if (bits == 18) return true;
 #endif
-#ifndef DISABLE_FIELD_19
+#ifdef ENABLE_FIELD_INT_19
     if (bits == 19) return true;
 #endif
-#ifndef DISABLE_FIELD_20
+#ifdef ENABLE_FIELD_INT_20
     if (bits == 20) return true;
 #endif
-#ifndef DISABLE_FIELD_21
+#ifdef ENABLE_FIELD_INT_21
     if (bits == 21) return true;
 #endif
-#ifndef DISABLE_FIELD_22
+#ifdef ENABLE_FIELD_INT_22
     if (bits == 22) return true;
 #endif
-#ifndef DISABLE_FIELD_23
+#ifdef ENABLE_FIELD_INT_23
     if (bits == 23) return true;
 #endif
-#ifndef DISABLE_FIELD_24
+#ifdef ENABLE_FIELD_INT_24
     if (bits == 24) return true;
 #endif
-#ifndef DISABLE_FIELD_25
+#ifdef ENABLE_FIELD_INT_25
     if (bits == 25) return true;
 #endif
-#ifndef DISABLE_FIELD_26
+#ifdef ENABLE_FIELD_INT_26
     if (bits == 26) return true;
 #endif
-#ifndef DISABLE_FIELD_27
+#ifdef ENABLE_FIELD_INT_27
     if (bits == 27) return true;
 #endif
-#ifndef DISABLE_FIELD_28
+#ifdef ENABLE_FIELD_INT_28
     if (bits == 28) return true;
 #endif
-#ifndef DISABLE_FIELD_29
+#ifdef ENABLE_FIELD_INT_29
     if (bits == 29) return true;
 #endif
-#ifndef DISABLE_FIELD_30
+#ifdef ENABLE_FIELD_INT_30
     if (bits == 30) return true;
 #endif
-#ifndef DISABLE_FIELD_31
+#ifdef ENABLE_FIELD_INT_31
     if (bits == 31) return true;
 #endif
-#ifndef DISABLE_FIELD_32
+#ifdef ENABLE_FIELD_INT_32
     if (bits == 32) return true;
 #endif
-#ifndef DISABLE_FIELD_33
+#ifdef ENABLE_FIELD_INT_33
     if (bits == 33) return true;
 #endif
-#ifndef DISABLE_FIELD_34
+#ifdef ENABLE_FIELD_INT_34
     if (bits == 34) return true;
 #endif
-#ifndef DISABLE_FIELD_35
+#ifdef ENABLE_FIELD_INT_35
     if (bits == 35) return true;
 #endif
-#ifndef DISABLE_FIELD_36
+#ifdef ENABLE_FIELD_INT_36
     if (bits == 36) return true;
 #endif
-#ifndef DISABLE_FIELD_37
+#ifdef ENABLE_FIELD_INT_37
     if (bits == 37) return true;
 #endif
-#ifndef DISABLE_FIELD_38
+#ifdef ENABLE_FIELD_INT_38
     if (bits == 38) return true;
 #endif
-#ifndef DISABLE_FIELD_39
+#ifdef ENABLE_FIELD_INT_39
     if (bits == 39) return true;
 #endif
-#ifndef DISABLE_FIELD_40
+#ifdef ENABLE_FIELD_INT_40
     if (bits == 40) return true;
 #endif
-#ifndef DISABLE_FIELD_41
+#ifdef ENABLE_FIELD_INT_41
     if (bits == 41) return true;
 #endif
-#ifndef DISABLE_FIELD_42
+#ifdef ENABLE_FIELD_INT_42
     if (bits == 42) return true;
 #endif
-#ifndef DISABLE_FIELD_43
+#ifdef ENABLE_FIELD_INT_43
     if (bits == 43) return true;
 #endif
-#ifndef DISABLE_FIELD_44
+#ifdef ENABLE_FIELD_INT_44
     if (bits == 44) return true;
 #endif
-#ifndef DISABLE_FIELD_45
+#ifdef ENABLE_FIELD_INT_45
     if (bits == 45) return true;
 #endif
-#ifndef DISABLE_FIELD_46
+#ifdef ENABLE_FIELD_INT_46
     if (bits == 46) return true;
 #endif
-#ifndef DISABLE_FIELD_47
+#ifdef ENABLE_FIELD_INT_47
     if (bits == 47) return true;
 #endif
-#ifndef DISABLE_FIELD_48
+#ifdef ENABLE_FIELD_INT_48
     if (bits == 48) return true;
 #endif
-#ifndef DISABLE_FIELD_49
+#ifdef ENABLE_FIELD_INT_49
     if (bits == 49) return true;
 #endif
-#ifndef DISABLE_FIELD_50
+#ifdef ENABLE_FIELD_INT_50
     if (bits == 50) return true;
 #endif
-#ifndef DISABLE_FIELD_51
+#ifdef ENABLE_FIELD_INT_51
     if (bits == 51) return true;
 #endif
-#ifndef DISABLE_FIELD_52
+#ifdef ENABLE_FIELD_INT_52
     if (bits == 52) return true;
 #endif
-#ifndef DISABLE_FIELD_53
+#ifdef ENABLE_FIELD_INT_53
     if (bits == 53) return true;
 #endif
-#ifndef DISABLE_FIELD_54
+#ifdef ENABLE_FIELD_INT_54
     if (bits == 54) return true;
 #endif
-#ifndef DISABLE_FIELD_55
+#ifdef ENABLE_FIELD_INT_55
     if (bits == 55) return true;
 #endif
-#ifndef DISABLE_FIELD_56
+#ifdef ENABLE_FIELD_INT_56
     if (bits == 56) return true;
 #endif
-#ifndef DISABLE_FIELD_57
+#ifdef ENABLE_FIELD_INT_57
     if (bits == 57) return true;
 #endif
-#ifndef DISABLE_FIELD_58
+#ifdef ENABLE_FIELD_INT_58
     if (bits == 58) return true;
 #endif
-#ifndef DISABLE_FIELD_59
+#ifdef ENABLE_FIELD_INT_59
     if (bits == 59) return true;
 #endif
-#ifndef DISABLE_FIELD_60
+#ifdef ENABLE_FIELD_INT_60
     if (bits == 60) return true;
 #endif
-#ifndef DISABLE_FIELD_61
+#ifdef ENABLE_FIELD_INT_61
     if (bits == 61) return true;
 #endif
-#ifndef DISABLE_FIELD_62
+#ifdef ENABLE_FIELD_INT_62
     if (bits == 62) return true;
 #endif
-#ifndef DISABLE_FIELD_63
+#ifdef ENABLE_FIELD_INT_63
     if (bits == 63) return true;
 #endif
-#ifndef DISABLE_FIELD_64
+#ifdef ENABLE_FIELD_INT_64
     if (bits == 64) return true;
 #endif
     return false;
