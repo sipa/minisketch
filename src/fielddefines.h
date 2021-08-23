@@ -471,4 +471,90 @@ Default: All fields enabled
 #error No fields enabled
 #endif
 
+#if defined(ENABLE_FIELD_INT_2) || \
+    defined(ENABLE_FIELD_INT_3) || \
+    defined(ENABLE_FIELD_INT_4) || \
+    defined(ENABLE_FIELD_INT_5) || \
+    defined(ENABLE_FIELD_INT_6) || \
+    defined(ENABLE_FIELD_INT_7) || \
+    defined(ENABLE_FIELD_INT_8)
+#define ENABLE_FIELD_BYTES_INT_1
+#endif
+
+#if defined(ENABLE_FIELD_INT_9) || \
+    defined(ENABLE_FIELD_INT_10) || \
+    defined(ENABLE_FIELD_INT_11) || \
+    defined(ENABLE_FIELD_INT_12) || \
+    defined(ENABLE_FIELD_INT_13) || \
+    defined(ENABLE_FIELD_INT_14) || \
+    defined(ENABLE_FIELD_INT_15) || \
+    defined(ENABLE_FIELD_INT_16)
+#define ENABLE_FIELD_BYTES_INT_2
+#endif
+
+#if defined(ENABLE_FIELD_INT_17) || \
+    defined(ENABLE_FIELD_INT_18) || \
+    defined(ENABLE_FIELD_INT_19) || \
+    defined(ENABLE_FIELD_INT_20) || \
+    defined(ENABLE_FIELD_INT_21) || \
+    defined(ENABLE_FIELD_INT_22) || \
+    defined(ENABLE_FIELD_INT_23) || \
+    defined(ENABLE_FIELD_INT_24)
+#define ENABLE_FIELD_BYTES_INT_3
+#endif
+
+#if defined(ENABLE_FIELD_INT_25) || \
+    defined(ENABLE_FIELD_INT_26) || \
+    defined(ENABLE_FIELD_INT_27) || \
+    defined(ENABLE_FIELD_INT_28) || \
+    defined(ENABLE_FIELD_INT_29) || \
+    defined(ENABLE_FIELD_INT_30) || \
+    defined(ENABLE_FIELD_INT_31) || \
+    defined(ENABLE_FIELD_INT_32)
+#define ENABLE_FIELD_BYTES_INT_4
+#endif
+
+#if defined(ENABLE_FIELD_INT_33) || \
+    defined(ENABLE_FIELD_INT_34) || \
+    defined(ENABLE_FIELD_INT_35) || \
+    defined(ENABLE_FIELD_INT_36) || \
+    defined(ENABLE_FIELD_INT_37) || \
+    defined(ENABLE_FIELD_INT_38) || \
+    defined(ENABLE_FIELD_INT_39) || \
+    defined(ENABLE_FIELD_INT_40)
+#define ENABLE_FIELD_BYTES_INT_5
+#endif
+
+#if defined(ENABLE_FIELD_INT_41) || \
+    defined(ENABLE_FIELD_INT_42) || \
+    defined(ENABLE_FIELD_INT_43) || \
+    defined(ENABLE_FIELD_INT_44) || \
+    defined(ENABLE_FIELD_INT_45) || \
+    defined(ENABLE_FIELD_INT_46) || \
+    defined(ENABLE_FIELD_INT_47) || \
+    defined(ENABLE_FIELD_INT_48)
+#define ENABLE_FIELD_BYTES_INT_6
+#endif
+
+#if defined(ENABLE_FIELD_INT_49) || \
+    defined(ENABLE_FIELD_INT_50) || \
+    defined(ENABLE_FIELD_INT_51) || \
+    defined(ENABLE_FIELD_INT_52) || \
+    defined(ENABLE_FIELD_INT_53) || \
+    defined(ENABLE_FIELD_INT_54) || \
+    defined(ENABLE_FIELD_INT_55) || \
+    defined(ENABLE_FIELD_INT_56)
+#define ENABLE_FIELD_BYTES_INT_7
+#endif
+
+#if defined(ENABLE_FIELD_INT_57) || \
+    defined(ENABLE_FIELD_INT_58) || \
+    defined(ENABLE_FIELD_INT_59) || \
+    defined(ENABLE_FIELD_INT_60) || \
+    defined(ENABLE_FIELD_INT_61) || \
+    defined(ENABLE_FIELD_INT_62) || \
+    defined(ENABLE_FIELD_INT_63) || \
+    defined(ENABLE_FIELD_INT_64)
+#define ENABLE_FIELD_BYTES_INT_8
+#endif
 #endif // _MINISKETCH_FIELDDEFINES_H_
