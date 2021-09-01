@@ -114,6 +114,7 @@ task:
     - env:
         CC: clang
   brew_script:
+    - brew update
     - brew install automake libtool gcc@9
   << : *MERGE_BASE
   test_script:
