@@ -13,6 +13,7 @@ MINISKETCH_DIST_HEADERS_INT += %reldir%/include/minisketch.h
 
 MINISKETCH_LIB_HEADERS_INT =
 MINISKETCH_LIB_HEADERS_INT += %reldir%/src/false_positives.h
+MINISKETCH_LIB_HEADERS_INT += %reldir%/src/fielddefines.h
 MINISKETCH_LIB_HEADERS_INT += %reldir%/src/int_utils.h
 MINISKETCH_LIB_HEADERS_INT += %reldir%/src/lintrans.h
 MINISKETCH_LIB_HEADERS_INT += %reldir%/src/sketch.h
