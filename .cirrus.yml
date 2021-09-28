@@ -42,7 +42,7 @@ env_matrix_snippet: &ENV_MATRIX_SAN
   - env:
       BUILD: distcheck
   - env:
-      CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
+      CXXFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
       LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
       UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
       BENCH: no
@@ -57,7 +57,7 @@ env_matrix_snippet: &ENV_MATRIX_SAN_VALGRIND
       TESTRUNS: 1
       BUILD:
   - env:
-      CFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
+      CXXFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
       LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
       UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
       BENCH: no
