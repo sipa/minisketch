@@ -40,7 +40,7 @@ uint64_t Log2Factorial(uint32_t x) {
     // A correction term is only needed for x < 3.
     //
     // See doc/log2_factorial.sage for how these constants were obtained.
-    return (418079 * (2 * uint64_t{x} + 1) * l2_106 - 127870026 * uint64_t{x} + 117504694 + 88632748 * (x < 3)) / 88632748;
+    return (418079 * (2 * uint64_t{x} + 1) * l2_106 + 117504694 + 88632748 * (x < 3) - 127870026 * uint64_t{x}) / 88632748;
 }
 
 /** Compute floor(log2(2^(bits * capacity) / sum((2^bits - 1) choose k, k=0..capacity))), for bits>1
