@@ -109,14 +109,15 @@ void TestExhaustive(uint32_t bits, size_t capacity) {
                 // Compare
                 CHECK(serialized == serialized_rebuild);
                 // Count it
-                if (elements_0.size() <= capacity) ++counts[elements_0.size()];
+                if (impl == 0 && elements_0.size() <= capacity) ++counts[elements_0.size()];
             }
         }
     }
 
     // Verify that the number of decodable sketches with given elements is expected.
-    for (uint64_t i = 0; i <= capacity && i >> bits; ++i) {
-        CHECK(counts[i] == Combination((uint64_t{1} << bits) - 1, i));
+    uint64_t mask = bits == 64 ? UINT64_MAX : (uint64_t{1} << bits) - 1;
+    for (uint64_t i = 0; i <= capacity && (i & mask) == i; ++i) {
+        CHECK(counts[i] == Combination(mask, i));
     }
 }
 
