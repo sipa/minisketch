@@ -8,6 +8,8 @@
 #   downstreams to use these variables without having to manually account for
 #   the path change.
 
+MINISKETCH_INCLUDE_DIR_INT = %reldir%/include
+
 MINISKETCH_DIST_HEADERS_INT =
 MINISKETCH_DIST_HEADERS_INT += %reldir%/include/minisketch.h
 
