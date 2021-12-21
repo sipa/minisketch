@@ -289,7 +289,7 @@ int main(int argc, char** argv) {
 #else
     const char* mode = "";
 #endif
-    printf("Running libminisketch tests%s with complexity=%llu\n", mode, static_cast<unsigned long long>(test_complexity));
+    printf("Running libminisketch tests%s with complexity=%llu\n", mode, (unsigned long long){test_complexity});
 
     TestComputeFunctions();
 
