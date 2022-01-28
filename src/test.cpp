@@ -274,7 +274,7 @@ int main(int argc, char** argv) {
         try {
             test_complexity = 0;
             long long complexity = std::stoll(arg, &len);
-            if (complexity >= 1 && len == arg.size() && (static_cast<uint64_t>(complexity) <= std::numeric_limits<uint64_t>::max() >> 10)) {
+            if (complexity >= 1 && len == arg.size() && (uint64_t(complexity) <= std::numeric_limits<uint64_t>::max() >> 10)) {
                 test_complexity = complexity;
             }
         } catch (const std::logic_error&) {}
