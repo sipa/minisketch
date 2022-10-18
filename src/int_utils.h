@@ -149,7 +149,7 @@ static inline int CountBits(I val, int max) {
         ret = _BitScanReverse64(&index, val);
     }
     if (!ret) return 0;
-    return index;
+    return index + 1;
 #else
     while (max && (val >> (max - 1) == 0)) --max;
     return max;
