@@ -72,9 +72,9 @@ task:
     << : *ENV_MATRIX_SAN_VALGRIND
   matrix:
     - env:
-        CC: gcc
+        CXX: g++
     - env:
-        CC: clang
+        CXX: clang++
   << : *MERGE_BASE
   test_script:
     - ./ci/cirrus.sh
@@ -92,9 +92,10 @@ task:
     << : *ENV_MATRIX_VALGRIND
   matrix:
     - env:
-        CC: i686-linux-gnu-gcc
+        CXX: i686-linux-gnu-g++
     - env:
-        CC: clang --target=i686-pc-linux-gnu -isystem /usr/i686-linux-gnu/include
+        CXX: clang++ --target=i686-linux-gnu
+        CXXFLAGS: -g -O2 -isystem /usr/i686-linux-gnu/include -isystem /usr/i686-linux-gnu/include/c++/10/i686-linux-gnu
   test_script:
     - ./ci/cirrus.sh
   << : *CAT_LOGS
@@ -110,9 +111,9 @@ task:
     << : *ENV_MATRIX_SAN
   matrix:
     - env:
-        CC: gcc-9
+        CXX: g++-9
     - env:
-        CC: clang
+        CXX: clang++
   brew_script:
     - brew update
     - brew install automake libtool gcc@9
