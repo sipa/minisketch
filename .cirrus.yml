@@ -152,3 +152,27 @@ task:
   test_script:
     - ./ci/cirrus.sh
   << : *CAT_LOGS
+
+task:
+  name: "x86_64: Windows (VS 2022)"
+  windows_container:
+    image: cirrusci/windowsservercore:visualstudio2022
+    cpu: 4
+    memory: 3840MB
+  env:
+    x64_NATIVE_TOOLS: '"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"'
+    # Ignore MSBuild warning MSB8029.
+    # See: https://learn.microsoft.com/en-us/visualstudio/msbuild/errors/msb8029?view=vs-2022
+    IgnoreWarnIntDirInTempDetected: 'true'
+  merge_script:
+    - PowerShell -NoLogo -Command if ($env:CIRRUS_PR -ne $null) { git fetch $env:CIRRUS_REPO_CLONE_URL pull/$env:CIRRUS_PR/merge; git reset --hard FETCH_HEAD; }
+  configure_script:
+    - '%x64_NATIVE_TOOLS%'
+    - cmake -G "Visual Studio 17 2022" -A x64 -S . -B build
+  build_script:
+    - '%x64_NATIVE_TOOLS%'
+    - cmake --build build --config Release --target minisketch_test minisketch_test_verify minisketch_bench -j 5 -- /p:CL_MPcount=5
+  check_script:
+    - build\Release\minisketch_test.exe
+    - build\Release\minisketch_test_verify.exe
+    - build\Release\minisketch_bench.exe
