@@ -119,7 +119,6 @@ if test "x$use_ccache" != "xno"; then
     fi
   else
     use_ccache=yes
-    CC="$ac_cv_path_CCACHE $CC"
     CXX="$ac_cv_path_CCACHE $CXX"
   fi
   AC_MSG_RESULT($use_ccache)
