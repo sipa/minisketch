@@ -7,6 +7,7 @@
 #ifndef _MINISKETCH_INT_UTILS_H_
 #define _MINISKETCH_INT_UTILS_H_
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include <limits>
