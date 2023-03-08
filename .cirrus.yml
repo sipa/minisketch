@@ -36,17 +36,6 @@ env_matrix_snippet: &ENV_MATRIX_VALGRIND
       TESTRUNS: 1
       BUILD:
 
-env_matrix_snippet: &ENV_MATRIX_SAN
-  - env:
-      ENABLE_FIELDS: 28
-  - env:
-      BUILD: distcheck
-  - env:
-      CXXFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
-      LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
-      UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
-      BENCH: no
-
 env_matrix_snippet: &ENV_MATRIX_SAN_VALGRIND
   - env:
       ENABLE_FIELDS: "11,64,37"
@@ -101,22 +90,36 @@ task:
   << : *CAT_LOGS
 
 task:
-  name: "x86_64: macOS Catalina"
+  name: "arm64: macOS Monterey"
   macos_instance:
-    image: catalina-base
+    image: ghcr.io/cirruslabs/macos-monterey-base:latest
   env:
-    # Cirrus gives us a fixed number of 12 virtual CPUs.
-    MAKEFLAGS: -j13
-  matrix:
-    << : *ENV_MATRIX_SAN
+    # Cirrus gives us a fixed number of 4 virtual CPUs.
+    MAKEFLAGS: -j5
   matrix:
     - env:
-        CXX: g++-9
+        CXX: g++-11
+      # Homebrew's gcc for arm64 has no libubsan.
+      matrix:
+        - env:
+            ENABLE_FIELDS: 28
+        - env:
+            BUILD: distcheck
     - env:
         CXX: clang++
+      matrix:
+        - env:
+            ENABLE_FIELDS: 28
+        - env:
+            BUILD: distcheck
+        - env:
+            CXXFLAGS:  "-fsanitize=undefined -fno-omit-frame-pointer"
+            LDFLAGS: "-fsanitize=undefined -fno-omit-frame-pointer"
+            UBSAN_OPTIONS: "print_stacktrace=1:halt_on_error=1"
+            BENCH: no
   brew_script:
     - brew update
-    - brew install automake libtool gcc@9
+    - brew install automake libtool gcc@11
   << : *MERGE_BASE
   test_script:
     - ./ci/cirrus.sh
