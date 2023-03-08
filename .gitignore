@@ -33,3 +33,6 @@ stamp-h1
 
 test*
 bench
+
+# Default CMake build directory.
+/build
