@@ -7,7 +7,7 @@ export LC_ALL=C
 
 env >> test_env.log
 
-$CC -v || true
+$CXX -v || true
 valgrind --version || true
 
 ./autogen.sh
