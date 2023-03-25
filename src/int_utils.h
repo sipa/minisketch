@@ -55,11 +55,10 @@ class BitWriter {
     int offset = 0;
     unsigned char* out;
 
-public:
-    BitWriter(unsigned char* output) : out(output) {}
-
     template<int BITS, typename I>
-    inline void Write(I val) {
+    inline void WriteInner(I val) {
+        // We right shift by up to 8 bits below. Verify that's well defined for the type I.
+        static_assert(std::numeric_limits<I>::digits > 8, "BitWriter::WriteInner needs I > 8 bits");
         int bits = BITS;
         if (bits + offset >= 8) {
             state |= ((val & ((I(1) << (8 - offset)) - 1)) << offset);
@@ -76,6 +75,19 @@ public:
         }
         state |= ((val & ((I(1) << bits) - 1)) << offset);
         offset += bits;
+    }
+
+
+public:
+    BitWriter(unsigned char* output) : out(output) {}
+
+    template<int BITS, typename I>
+    inline void Write(I val) {
+        // If I is smaller than an unsigned int, invoke WriteInner with argument converted to unsigned.
+        using compute_type = typename std::conditional<
+            (std::numeric_limits<I>::digits < std::numeric_limits<unsigned>::digits),
+            unsigned, I>::type;
+        return WriteInner<BITS, compute_type>(val);
     }
 
     inline void Flush() {
