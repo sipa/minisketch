@@ -130,6 +130,7 @@ RELEASE_DEFINES=
 
 AC_CONFIG_FILES([
     Makefile
+    libminisketch.pc
 ])
 
 AC_SUBST(CLMUL_CXXFLAGS)
