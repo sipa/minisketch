@@ -14,7 +14,9 @@
 #include <algorithm>
 #include <type_traits>
 
-#ifdef _MSC_VER
+#if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
+#  include <bit>
+#elif defined(_MSC_VER)
 #  include <intrin.h>
 #endif
 
@@ -130,7 +132,11 @@ constexpr inline I Mask() { return ((I((I(-1)) << (std::numeric_limits<I>::digit
 /** Compute the smallest power of two that is larger than val. */
 template<typename I>
 static inline int CountBits(I val, int max) {
-#ifdef _MSC_VER
+#if defined(__cpp_lib_int_pow2) && __cpp_lib_int_pow2 >= 202002L
+    // c++20 impl
+    (void)max;
+    return std::bit_width(val);
+#elif defined(_MSC_VER)
     (void)max;
     unsigned long index;
     unsigned char ret;
